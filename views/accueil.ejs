@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Test Redis</title>
+        <style>
+            a {text-decoration: none; color: black;}
+        </style>
+    </head>
+    <%
+        if(typeof locals.key == 'undefined'){
+            locals.key ='';
+        }
+        if(typeof locals.value == 'undefined'){
+            locals.value ='';
+        }
+    %>
+    <body>
+        <h3>Inserez clé et valeur</h3>
+    	<form action="/redis/set/" method="post">
+            <p>     
+                <label for="key">Clé</label>
+                <input type="text" name="key" id="key" autofocus />
+                <label for="value">Valeur</label>
+                <input type="text" name="value" id="Value" autofocus />
+                <input type="submit" />
+            </p>
+        </form>
+        <% if(locals.key != '' && locals.value !=''){ %>
+            <div>
+                <p> Clé : <%= key%> </p>
+                <p> Valeur : <%= value%> </p>
+            </div>
+        <% } %>
+        <h3>Clé à trouver</h3>
+        <form action="/redis/get/" method="post">
+            <p>     
+                <label for="key">Clé</label>
+                <input type="text" name="key" id="key" autofocus />
+                <input type="submit" />
+            </p>
+        </form>
+    </body>
+</html>
