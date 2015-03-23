@@ -17,6 +17,9 @@
                 <input type="password" name="passwd" id="passwd" autofocus />
                 <input type="submit" />
             </p>
+            <% if(typeof locals.msg != 'undefined'){ %>
+                <p> <%= msg %> </p>
+            <% } %>
         </form>
         <br/>
         <h3>Ou inscrivez-vous :</h3>
@@ -31,5 +34,8 @@
                 <input type="submit"/>
             </p>
         </form>
+        <% if(typeof locals.msg2 != 'undefined'){ %>
+            <p> <%= msg2 %> </p>
+        <% } %>
     </body>
 </html>
