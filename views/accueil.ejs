@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="//bootswatch.com/cerulean/bootstrap.min.css">
         <link rel="stylesheet" href="//bootswatch.com/cerulean/bootstrap.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
         
         <title>TP Twitter</title>
         <style>
@@ -16,62 +17,110 @@
     </head>
     <body>
 
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
 
-        <nav class="navbar navbar-default" role="navigation">
-            <div class="container-fluid">
-
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="#">
-                        <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
-                        TP Twitter
-                    </a>
-                </div>
-
-                <ul class="nav navbar-nav">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/about">About</a></li>
-                </ul>
-              
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">
+                    <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
+                    TP Twitter
+                </a>
             </div>
-        </nav>
 
-        <div class="col-lg-4">
+            <ul class="nav navbar-nav">
+                <li><a href="/">Home</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+          
+        </div>
+    </nav>
+
+        <!-- formulaire login -->
+        <div class="col-lg-6">
             <div class="well bs-component">
                 <legend>Veuillez vous connecter :</legend>
-            	<form class="form-horizontal" action="/tptwitter/login/" method="post">
+            	<form class="form-horizontal" id="loginForm"> <!--action="/tptwitter/login/" method="post"-->
 
                     <div class="form-group">
                         <label class="col-lg-2" for="login">Login</label>
-                        <div class="col-lg-4">
-                            <input type="text" class="form-control" name="login" autofocus />
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="login" name="login" autofocus />
                         </div>
                     </div> 
 
                     <div class="form-group">
                         <label class="col-lg-2" for="passwd">Password</label>
 
-                        <div class="col-lg-4">
-                            <input type="password" class="form-control" name="passwd" autofocus />
+                        <div class="col-lg-6">
+                            <input type="password" class="form-control" id="passwd" name="passwd" autofocus />
+                            <p class="text-danger" id="ResultLogin"> </p>
                         </div>
                     </div>
-                    <button class="btn btn-primary btn-lg-2" type="submit"> Submit </button>
+                    <button class="btn btn-primary btn-lg-2" type="button" onclick="loginCheck()"> Submit </button>
 
                 </form>
             </div>
         </div>
 
-        <br/>
-        <h3>Ou inscrivez-vous :</h3>
-        <form action="/tptwitter/newuser/" method="post">
-            <p>     
-                <label for="newlogin">Username</label>
-                <input type="text" name="newlogin" id="newlogin" autofocus />
-                <label for="newpasswd">Password</label>
-                <input type="password" name="newpasswd" autofocus />
-                <label for="newpasswd2">Retype your Password</label>
-                <input type="password" name="newpasswd2" autofocus />
-                <input type="submit"/>
-            </p>
-        </form>
+        <script>
+            function loginCheck(){
+               $.ajax({
+                   url : '/tptwitter/login',
+                   type : 'POST',
+                   data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
+                   success : function(result){
+                        $('#ResultLogin').text(result.msg);
+                   }
+                });
+            }
+        </script>
+
+
+
+        <div class="col-lg-6">
+            <div class="well bs-component">
+                <legend>Ou inscrivez vous : </legend>
+                <form class="form-horizontal" id="loginForm"> <!--action="/tptwitter/login/" method="post"-->
+
+                    <div class="form-group">
+                        <label class="col-lg-2" for="newLogin">Login</label>
+                        <div class="col-lg-6">
+                            <input type="text" class="form-control" id="newLogin" name="newLogin" autofocus />
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <label class="col-lg-2" for="newPasswd">Password</label>
+
+                        <div class="col-lg-6">
+                            <input type="password" class="form-control" id="newPasswd" name="newPasswd" autofocus />                        
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-lg-2" for="newPasswd2">Retype your Password</label>
+                        <div class="col-lg-6">
+                            <input type="password" class="form-control" id="newPasswd2" name="newPasswd2" autofocus />
+                            <p class="text-danger" id="ResultNewUser"> </p>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-lg-2" type="button" onclick="newUserCheck()"> Submit </button>
+
+                </form>
+            </div>
+        </div>
+
+        <script>
+            function newUserCheck(){
+               $.ajax({
+                   url : '/tptwitter/newuser',
+                   type : 'POST',
+                   data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
+                   success : function(result){
+                        $('#ResultNewUser').text(result.msg);
+                   }
+                });
+            }
+        </script>
     </body>
 </html>
