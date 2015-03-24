@@ -7,7 +7,7 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var app = express();
 
 app.get('/accueil', function(req,res){
-	res.render('accueil.ejs', {nom: req.params.nom});
+	res.render('accueil.ejs', {msg: req.params.msg});
 });
 
 app.post('/tptwitter/login', urlencodedParser, function(req, res){

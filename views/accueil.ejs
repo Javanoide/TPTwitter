@@ -2,25 +2,64 @@
 
 <html>
     <head>
+        <meta charset="utf-8">
+        <title>testyo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <link rel="stylesheet" href="//bootswatch.com/cerulean/bootstrap.min.css">
+        <link rel="stylesheet" href="//bootswatch.com/cerulean/bootstrap.css">
+        
         <title>TP Twitter</title>
         <style>
             a {text-decoration: none; color: black;}
         </style>
     </head>
     <body>
-        <h3>Veuillez vous connecter :</h3>
-    	<form action="/tptwitter/login/" method="post">
-            <p>     
-                <label for="login">Login</label>
-                <input type="text" name="login" id="login" autofocus />
-                <label for="passwd">Password</label>
-                <input type="password" name="passwd" id="passwd" autofocus />
-                <input type="submit" />
-            </p>
-            <% if(typeof locals.msg != 'undefined'){ %>
-                <p> <%= msg %> </p>
-            <% } %>
-        </form>
+
+
+        <nav class="navbar navbar-default" role="navigation">
+            <div class="container-fluid">
+
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="#">
+                        <span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>
+                        TP Twitter
+                    </a>
+                </div>
+
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+              
+            </div>
+        </nav>
+
+        <div class="col-lg-4">
+            <div class="well bs-component">
+                <legend>Veuillez vous connecter :</legend>
+            	<form class="form-horizontal" action="/tptwitter/login/" method="post">
+
+                    <div class="form-group">
+                        <label class="col-lg-2" for="login">Login</label>
+                        <div class="col-lg-4">
+                            <input type="text" class="form-control" name="login" autofocus />
+                        </div>
+                    </div> 
+
+                    <div class="form-group">
+                        <label class="col-lg-2" for="passwd">Password</label>
+
+                        <div class="col-lg-4">
+                            <input type="password" class="form-control" name="passwd" autofocus />
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-lg-2" type="submit"> Submit </button>
+
+                </form>
+            </div>
+        </div>
+
         <br/>
         <h3>Ou inscrivez-vous :</h3>
         <form action="/tptwitter/newuser/" method="post">
@@ -28,14 +67,11 @@
                 <label for="newlogin">Username</label>
                 <input type="text" name="newlogin" id="newlogin" autofocus />
                 <label for="newpasswd">Password</label>
-                <input type="password" name="newpasswd" id="newpasswd" autofocus />
+                <input type="password" name="newpasswd" autofocus />
                 <label for="newpasswd2">Retype your Password</label>
-                <input type="password" name="newpasswd2" id="newpasswd2" autofocus />
+                <input type="password" name="newpasswd2" autofocus />
                 <input type="submit"/>
             </p>
         </form>
-        <% if(typeof locals.msg2 != 'undefined'){ %>
-            <p> <%= msg2 %> </p>
-        <% } %>
     </body>
 </html>
