@@ -70,6 +70,16 @@
                    data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
                    success : function(result){
                         $('#ResultLogin').text(result.msg);
+                        alert(result.user);
+                        if(result.success==true){
+                            /*var form = document.createElement('form');
+                            form.method = 'post';
+                            form.action = '/home';
+                            form.submit();*/
+                            var form = '';
+                            form += '<input type="hidden" name="user" value="'+ result.user +'">';
+                            $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
+                        }
                    }
                 });
             }

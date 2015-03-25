@@ -6,11 +6,20 @@ var urlencodedParser = bodyParser.urlencoded({ extended: false });
 
 var app = express();
 
-app.get('/accueil', function(req,res){
-	res.render('accueil.ejs', {msg: req.params.msg});
+app.get('/', function(req,res){
+	res.render('login.ejs');
 });
 
-//SERVICEs REST
+app.post('/home', urlencodedParser, function(req,res){
+	console.log(req.body.user);
+	res.render('home.ejs');
+});
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//SERVICEs REST-----------------------------------------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//Login d'un utilisateur
 app.post('/tptwitter/login', urlencodedParser, function(req, res){
 	if(req.body.login !='' && req.body.passwd != ''){
 		//on récupére l'id du l'user à partir de son login
@@ -21,13 +30,13 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 				client.hget('user:'+id, 'password', function(err, reply){
 					var password = reply;
 					if(reply && password == req.body.passwd){
-						res.json({msg: 'success login'});
+						res.json({success: true, user: req.body.login, msg: 'success login'});
 					}else{
-						res.json({msg: 'Echec de la connexion'});
+						res.json({success: false, user: req.body.login, msg: 'Echec de la connexion'});
 					}
 				});
 			}else{
-				res.json({msg: 'Echec de la connexion'});
+				res.json({success: false, user: req.body.login, msg: 'Echec de la connexion'});
 			}
 		});
 	}
@@ -67,37 +76,25 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 	}
 	
 });
-/*
-app.get('/redis/set/:key/:value', function(req, res){
-	client.set(req.params.key, req.params.value);
-	res.redirect('/accueil');
-})
 
-app.get('/redis/get/:key', function(req, res){
-	client.get(req.params.key, function(err, reply){
-		if(reply){
-			res.render('accueil.ejs', {key: req.params.key, value: reply});
-		}else{
-			res.render('noValue.ejs');
-		}
-	});
+//récupére les followers d'un l'utilisateur
+app.post('/tptwitter/follower', urlencodedParser, function(req, res){
+
 });
 
-app.post('/redis/set', urlencodedParser, function(req, res){
-	if(req.body.key!='' && req.body.value !=''){
-		res.redirect('/redis/set/' + req.body.key +'/' + req.body.value);
-	}else{
-		res.redirect('/accueil');
-	}
-	
+//récupére ceux qu'un utilisateur suit
+app.post('/tptwitter/following', urlencodedParser, function(req, res){
+
 });
 
-app.post('/redis/get', urlencodedParser, function(req, res){
-	if(req.body.key!=''){
-		res.redirect('/redis/get/' + req.body.key +'/');
-	}
-	
-});*/
+//récupére les poste d'un utilisateur
+app.post('/tptwitter/post', urlencodedParser, function(req, res){
+
+});
+//vérifie le cookie d'un utilisateur par rapport à celui stocké sur son navigateur.
+app.post('/tptwitter/checkcookie', urlencodedParser, function(req, res){
+
+});
 
 app.use(function(req, res, next){
 	res.setHeader('Content-Type', 'text/plain');
