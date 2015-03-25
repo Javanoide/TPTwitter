@@ -30,13 +30,13 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 				client.hget('user:'+id, 'password', function(err, reply){
 					var password = reply;
 					if(reply && password == req.body.passwd){
-						res.json({success: true, user: req.body.login, msg: 'success login'});
+						res.json({success: true, userid: id, msg: 'success login'});
 					}else{
-						res.json({success: false, user: req.body.login, msg: 'Echec de la connexion'});
+						res.json({success: false, userid: id, msg: 'Echec de la connexion'});
 					}
 				});
 			}else{
-				res.json({success: false, user: req.body.login, msg: 'Echec de la connexion'});
+				res.json({success: false, userid: id, msg: 'Echec de la connexion'});
 			}
 		});
 	}
@@ -77,22 +77,36 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 	
 });
 
+//ajoute un followers à un utilisateur
+app.post('/tptwitter/follower/:id', urlencodedParser, function(req, res){
+
+});
 //récupére les followers d'un l'utilisateur
-app.post('/tptwitter/follower', urlencodedParser, function(req, res){
+app.get('/tptwitter/follower/:id', function(req, res){
 
 });
 
+//ajoute un utilisateur à suivre
+app.post('/tptwitter/following/:id', urlencodedParser, function(req, res){
+
+});
 //récupére ceux qu'un utilisateur suit
-app.post('/tptwitter/following', urlencodedParser, function(req, res){
+app.get('/tptwitter/following/:id', function(req, res){
 
 });
 
 //récupére les poste d'un utilisateur
-app.post('/tptwitter/post', urlencodedParser, function(req, res){
+app.post('/tptwitter/post/:id', urlencodedParser, function(req, res){
 
 });
+
+//ajoute le post d'un utilisateur
+app.get('/tptwitter/post/:id', urlencodedParser, function(req, res){
+
+});
+
 //vérifie le cookie d'un utilisateur par rapport à celui stocké sur son navigateur.
-app.post('/tptwitter/checkcookie', urlencodedParser, function(req, res){
+app.post('/tptwitter/checkcookie', function(req, res){
 
 });
 
