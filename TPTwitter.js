@@ -2,7 +2,9 @@ var express = require('express');
 var redis = require('redis');
 var client = redis.createClient();
 var bodyParser = require('body-parser');
+var session = require('cookie-session'); 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
+var uuid = require('node-uuid');
 
 var app = express();
 
@@ -10,8 +12,12 @@ app.get('/', function(req,res){
 	res.render('login.ejs');
 });
 
+app.get('/test', function(req,res){
+	console.log(uuid.v4());
+});
+
 app.post('/home', urlencodedParser, function(req,res){
-	console.log(req.body.user);
+	console.log(req.body.userid);
 	res.render('home.ejs');
 });
 
@@ -30,6 +36,12 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 				client.hget('user:'+id, 'password', function(err, reply){
 					var password = reply;
 					if(reply && password == req.body.passwd){
+						//création d'un cookie pour l'utilisateur qui vient de se logger
+						cookieid = uuid.v4();
+						client.hset('user:'+ id, 'auth', cookieid);
+						console.log('user:'+ id, 'auth', cookieid);
+						res.cookie("auth", cookieid, { expires: new Date(Date.now() + 1000 * 60 * 10), httpOnly: true });
+						//on renvoie que loggin à reussi
 						res.json({success: true, userid: id, msg: 'success login'});
 					}else{
 						res.json({success: false, userid: id, msg: 'Echec de la connexion'});
@@ -105,9 +117,10 @@ app.get('/tptwitter/post/:id', urlencodedParser, function(req, res){
 
 });
 
-//vérifie le cookie d'un utilisateur par rapport à celui stocké sur son navigateur.
+//ajoute un cookie à l'utilisateur
 app.post('/tptwitter/checkcookie', function(req, res){
 
+	
 });
 
 app.use(function(req, res, next){
