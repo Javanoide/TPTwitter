@@ -90,8 +90,15 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 });
 
 //ajoute un followers à un utilisateur
-app.post('/tptwitter/follower/:id', urlencodedParser, function(req, res){
-
+app.get('/tptwitter/follower/:userid/:followid', urlencodedParser, function(req, res){
+	if(req.params.id != '' && req.params.id2 != ''){
+		console.log(Date.now());
+		client.zadd( 'followers:' + req.params.userid, Date.now(), req.params.followid, function (err, response) {
+			if(err) throw err;
+			console.log(err);
+			console.log(response);
+		});
+	}
 });
 //récupére les followers d'un l'utilisateur
 app.get('/tptwitter/follower/:id', function(req, res){
