@@ -90,44 +90,100 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 });
 
 //ajoute un followers à un utilisateur
-app.get('/tptwitter/follower/:userid/:followid', urlencodedParser, function(req, res){
-	if(req.params.id != '' && req.params.id2 != ''){
-		console.log(Date.now());
-		client.zadd( 'followers:' + req.params.userid, Date.now(), req.params.followid, function (err, response) {
-			if(err) throw err;
-			console.log(err);
-			console.log(response);
-		});
-	}
+app.post('/tptwitter/follower', urlencodedParser, 
+	function(req, res){
+		if(req.body.userid != '' && req.body.followid != ''
+			&& typeof req.body.userid != 'undefined' 
+			&& typeof req.body.followid != 'undefined'){
+			client.zadd( 'followers:' + req.body.userid, Date.now(), req.body.followid, 
+				function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+					}
+				});
+		}//ajouter msg erreur
 });
-//récupére les followers d'un l'utilisateur
-app.get('/tptwitter/follower/:id', function(req, res){
+//récupére les followers d'un l'utilisateur (trie du plus ancien au plus recent)
+app.get('/tptwitter/follower/:userid', function(req, res){
+	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
+		client.zrange('followers:' + req.params.userid, 0, -1, //'withscores', 
+			function (err, response) {
+				if(err){
+					throw err;
+					console.log(err);
+				}else{
+					res.json(response);
+				}
+		});
+	}//ajouter msg erreur
 
 });
 
 //ajoute un utilisateur à suivre
-app.post('/tptwitter/following/:id', urlencodedParser, function(req, res){
+app.post('/tptwitter/following/', urlencodedParser, 
+	function(req, res){
+		if(req.body.userid != '' && req.body.followid != ''
+			&& typeof req.body.userid != 'undefined' 
+			&& typeof req.body.followid != 'undefined'){
+			client.zadd( 'following:' + req.body.userid, Date.now(), req.body.followid, 
+				function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+					}
+				});
+		}//ajouter msg erreur
 
 });
-//récupére ceux qu'un utilisateur suit
-app.get('/tptwitter/following/:id', function(req, res){
-
-});
-
-//récupére les poste d'un utilisateur
-app.post('/tptwitter/post/:id', urlencodedParser, function(req, res){
+//récupére ceux qu'un utilisateur suit (trie du plus ancien au plus recent)
+app.get('/tptwitter/following/:userid', 
+	function(req, res){
+		if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
+			client.zrange('following:' + req.params.userid, 0, -1, //'withscores', 
+				function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+					}else{
+						res.json(response);
+					}
+			});
+		}//ajouter msg erreur
 
 });
 
 //ajoute le post d'un utilisateur
-app.get('/tptwitter/post/:id', urlencodedParser, function(req, res){
+app.post('/tptwitter/post', urlencodedParser, 
+	function(req, res){
+		if(req.body.id != '' && req.body.msg != ''
+			&& typeof req.body.id != 'undefined' 
+			&& typeof req.body.msg != 'undefined'){
+			client.zadd( 'post:' + req.body.id, Date.now(), req.body.msg, 
+				function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+					}
+				});
+		}
 
 });
+//récupére les poste d'un utilisateur (trie du plus recent au plus ancien)
+app.get('/tptwitter/post/:id', 
+	function(req, res){
+		if(req.params.id != '' && typeof req.params.id != 'undefined') {
+			client.zrevrange('post:' + req.params.id, 0, -1, //'withscores', 
+				function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+					}else{
+						res.json(response);
+					}
+			});
+		}
 
-//ajoute un cookie à l'utilisateur
-app.post('/tptwitter/checkcookie', function(req, res){
-
-	
 });
 
 app.use(function(req, res, next){
