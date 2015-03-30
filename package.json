@@ -5,7 +5,8 @@
  		"express": "~4.11.0",
  		"ejs": "~2.1.4",
  		"cookie-session": "~1.1.0",
- 		"body-parser": "~1.10.1"
+ 		"body-parser": "~1.10.1",
+ 		"node-uuid": "1.4.3"
  	},
  	"author": "Florent Baudon",
  	"description": "TP Twitter cours NoSQL"

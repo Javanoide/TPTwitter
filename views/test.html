@@ -39,7 +39,7 @@
         <!-- formulaire login -->
         <div class="col-lg-6">
             <div class="well bs-component">
-                <legend>Veuillez vous connecter :</legend>
+                <legend>Veuillez vous connecter : </legend>
             	<form class="form-horizontal" id="loginForm"> <!--action="/tptwitter/login/" method="post"-->
 
                     <div class="form-group">
@@ -73,15 +73,14 @@
                         $('#ResultLogin').text(result.msg);
                         alert(result.userid);
                         if(result.success==true){
-                            var form = '';
+                            /*var form = '';
                             form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
-                            $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
+                            $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();*/
+                            window.location.replace('views/test.html');
                         }
                    }
                 });
             }
-
-            //document.cookie =name + "=" + value + expire;
         </script>
 
 
