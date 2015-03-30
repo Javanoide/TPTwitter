@@ -8,17 +8,23 @@ var uuid = require('node-uuid');
 
 var app = express();
 
+///////////////////////////////////////////////
+//Routes
+///////////////////////////////////////////////
 app.get('/', function(req,res){
 	res.render('login.ejs');
 });
-
+//route de test
 app.get('/test', function(req,res){
-	console.log(uuid.v4());
 });
 
 app.post('/home', urlencodedParser, function(req,res){
 	console.log(req.body.userid);
 	res.render('home.ejs');
+});
+
+app.get('/about', function(req,res){
+	res.render('about.ejs');
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +58,7 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 			}
 		});
 	}
-	
+	set
 });
 
 //enregistrement d'un nouvel utilisateur
