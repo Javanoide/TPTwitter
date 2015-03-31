@@ -23,6 +23,10 @@ app.post('/home', urlencodedParser, function(req,res){
 	console.log(req.body.userid);
 	res.render('home.ejs');
 });
+//test en get
+app.get('/home', function(req,res){
+	res.render('home.ejs');
+});
 
 app.get('/about', function(req,res){
 	res.render('about.ejs');
