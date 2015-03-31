@@ -36,15 +36,16 @@
         </div>
     </nav>
 
-        <!-- formulaire login -->
-        <div class="col-lg-6">
+    <!-- formulaire login -->
+    <div class ='row'>
+        <div class="col-lg-offset-4 col-lg-4">
             <div class="well bs-component">
                 <legend>Veuillez vous connecter :</legend>
             	<form class="form-horizontal" id="loginForm"> <!--action="/tptwitter/login/" method="post"-->
 
                     <div class="form-group">
                         <label class="col-lg-2" for="login">Login</label>
-                        <div class="col-lg-6">
+                        <div class="col-lg-10">
                             <input type="text" class="form-control" id="login" name="login" autofocus />
                         </div>
                     </div> 
@@ -52,7 +53,7 @@
                     <div class="form-group">
                         <label class="col-lg-2" for="passwd">Password</label>
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-10">
                             <input type="password" class="form-control" id="passwd" name="passwd" autofocus />
                             <p class="text-danger" id="ResultLogin"> </p>
                         </div>
@@ -62,38 +63,39 @@
                 </form>
             </div>
         </div>
+    </div>
 
-        <script>
-            function loginCheck(){
-               $.ajax({
-                   url : '/tptwitter/login',
-                   type : 'POST',
-                   data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
-                   success : function(result){
-                        $('#ResultLogin').text(result.msg);
-                        alert(result.userid);
-                        if(result.success==true){
-                            var form = '';
-                            form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
-                            $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
-                        }
-                   }
-                });
-            }
+    <script>
+        function loginCheck(){
+           $.ajax({
+               url : '/tptwitter/login',
+               type : 'POST',
+               data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
+               success : function(result){
+                    $('#ResultLogin').text(result.msg);
+                    alert(result.userid);
+                    if(result.success==true){
+                        var form = '';
+                        form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
+                        $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
+                    }
+               }
+            });
+        }
 
-            //document.cookie =name + "=" + value + expire;
-        </script>
+        //document.cookie =name + "=" + value + expire;
+    </script>
 
-
-
-        <div class="col-lg-6">
+    <!--Formulaire inscription-->
+    <div class='row'>
+        <div class="col-lg-offset-4 col-lg-4">
             <div class="well bs-component">
                 <legend>Ou inscrivez vous : </legend>
                 <form class="form-horizontal" id="loginForm"> <!--action="/tptwitter/login/" method="post"-->
 
                     <div class="form-group">
                         <label class="col-lg-2" for="newLogin">Login</label>
-                        <div class="col-lg-6">
+                        <div class="col-lg-10">
                             <input type="text" class="form-control" id="newLogin" name="newLogin" autofocus />
                         </div>
                     </div> 
@@ -101,14 +103,14 @@
                     <div class="form-group">
                         <label class="col-lg-2" for="newPasswd">Password</label>
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-10">
                             <input type="password" class="form-control" id="newPasswd" name="newPasswd" autofocus />                        
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label class="col-lg-2" for="newPasswd2">Retype your Password</label>
-                        <div class="col-lg-6">
+                        <div class="col-lg-10">
                             <input type="password" class="form-control" id="newPasswd2" name="newPasswd2" autofocus />
                             <p class="text-danger" id="ResultNewUser"> </p>
                         </div>
@@ -118,18 +120,18 @@
                 </form>
             </div>
         </div>
-
-        <script>
-            function newUserCheck(){
-               $.ajax({
-                   url : '/tptwitter/newuser',
-                   type : 'POST',
-                   data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
-                   success : function(result){
-                        $('#ResultNewUser').text(result.msg);
-                   }
-                });
-            }
-        </script>
+    </div>
+    <script>
+        function newUserCheck(){
+           $.ajax({
+               url : '/tptwitter/newuser',
+               type : 'POST',
+               data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
+               success : function(result){
+                    $('#ResultNewUser').text(result.msg);
+               }
+            });
+        }
+    </script>
     </body>
 </html>
