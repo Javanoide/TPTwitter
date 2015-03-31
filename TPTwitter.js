@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var session = require('cookie-session'); 
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var uuid = require('node-uuid');
+var async = require('async');
 
 var app = express();
 
@@ -58,7 +59,6 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 			}
 		});
 	}
-	set
 });
 
 //enregistrement d'un nouvel utilisateur
@@ -96,38 +96,73 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 });
 
 //ajoute un followers à un utilisateur
-app.post('/tptwitter/follower', urlencodedParser, 
-	function(req, res){
-		if(req.body.userid != '' && req.body.followid != ''
-			&& typeof req.body.userid != 'undefined' 
-			&& typeof req.body.followid != 'undefined'){
-			client.zadd( 'followers:' + req.body.userid, Date.now(), req.body.followid, 
-				function (err, response) {
-					if(err){
-						throw err;
-						console.log(err);
-					}
-				});
-		}//ajouter msg erreur
-});
-//récupére les followers d'un l'utilisateur (trie du plus ancien au plus recent)
-app.get('/tptwitter/follower/:userid', function(req, res){
-	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
-		client.zrange('followers:' + req.params.userid, 0, -1, //'withscores', 
+app.post('/tptwitter/followers', urlencodedParser, function(req, res){
+	if(req.body.userid != '' && req.body.followid != ''
+		&& typeof req.body.userid != 'undefined' 
+		&& typeof req.body.followid != 'undefined'){
+		client.zadd( 'followers:' + req.body.userid, Date.now(), req.body.followid, 
 			function (err, response) {
 				if(err){
 					throw err;
 					console.log(err);
-				}else{
-					res.json(response);
 				}
+			});
+	}//ajouter msg erreur
+});
+//récupére les followers d'un l'utilisateur (trie du plus ancien au plus recent)
+app.get('/tptwitter/followers/:userid', function(req, res){
+	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
+		//on recherche les id des followers
+		client.zrange('followers:' + req.params.userid, 0, -1, function (err, response) {
+			if(err){
+				throw err;
+				console.log(err);
+			}else{
+				//on stocke le resultat dans un tableau
+				var idList = response;
+				//tableau qui va contenir le nom des followers
+				var followersNames = [];
+				//Comme les requêtes sont asynchrones, j'utilise async.each pour attendre la fin de toutes le requête hget avant d'envoyer le tableau dûement rempli
+				async.each(idList,
+					function(id, callback){
+						client.hget('user:'+ id, 'username', function(err, reply){
+							if(err){
+								throw err;
+								console.log(err);
+							}else{
+								followersNames.push(reply);
+								callback();
+							}
+						});
+
+					},
+					//quand les requetes sont fini, je recherche le nom de l'utilisateur et je construit ma reponse json
+					function(err){
+						if(err){
+							console.log(err);
+							throw err;
+						}else{
+							//on récupére le nom de lutilisateur
+							client.hget('user:'+ req.params.userid, 'username', function(err, reply){
+								if(err){
+									throw err;
+									console.log(err);
+								}else{
+									//reponse json
+									res.json({userid : reply, followers : followersNames});
+								}
+							});
+						}
+					}
+				);
+			}
 		});
 	}//ajouter msg erreur
 
 });
 
 //ajoute un utilisateur à suivre
-app.post('/tptwitter/following/', urlencodedParser, 
+app.post('/tptwitter/followings/', urlencodedParser, 
 	function(req, res){
 		if(req.body.userid != '' && req.body.followid != ''
 			&& typeof req.body.userid != 'undefined' 
@@ -143,7 +178,7 @@ app.post('/tptwitter/following/', urlencodedParser,
 
 });
 //récupére ceux qu'un utilisateur suit (trie du plus ancien au plus recent)
-app.get('/tptwitter/following/:userid', 
+app.get('/tptwitter/followings/:userid', 
 	function(req, res){
 		if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
 			client.zrange('following:' + req.params.userid, 0, -1, //'withscores', 
@@ -152,8 +187,44 @@ app.get('/tptwitter/following/:userid',
 						throw err;
 						console.log(err);
 					}else{
-						res.json(response);
-					}
+					//on stocke le resultat dans un tableau
+					var idList = response;
+					//tableau qui va contenir le nom des followers
+					var followingsNames = [];
+					//Comme les requêtes sont asynchrones, j'utilise async.each pour attendre la fin de toutes le requête hget avant d'envoyer le tableau dûement rempli
+					async.each(idList,
+						function(id, callback){
+							client.hget('user:'+ id, 'username', function(err, reply){
+								if(err){
+									throw err;
+									console.log(err);
+								}else{
+									followingsNames.push(reply);
+									callback();
+								}
+							});
+
+						},
+						//quand les requetes sont fini, je recherche le nom de l'utilisateur et je construit ma reponse json
+						function(err){
+							if(err){
+								console.log(err);
+								throw err;
+							}else{
+								//on récupére le nom de lutilisateur
+								client.hget('user:'+ req.params.userid, 'username', function(err, reply){
+									if(err){
+										throw err;
+										console.log(err);
+									}else{
+										//reponse json
+										res.json({userid : reply, followings : followingsNames});
+									}
+								});
+							}
+						}
+					);
+				}
 			});
 		}//ajouter msg erreur
 
@@ -165,7 +236,7 @@ app.post('/tptwitter/post', urlencodedParser,
 		if(req.body.id != '' && req.body.msg != ''
 			&& typeof req.body.id != 'undefined' 
 			&& typeof req.body.msg != 'undefined'){
-			client.zadd( 'post:' + req.body.id, Date.now(), req.body.msg, 
+			client.zadd( 'posts:' + req.body.id, Date.now(), req.body.msg, 
 				function (err, response) {
 					if(err){
 						throw err;
@@ -176,16 +247,25 @@ app.post('/tptwitter/post', urlencodedParser,
 
 });
 //récupére les poste d'un utilisateur (trie du plus recent au plus ancien)
-app.get('/tptwitter/post/:id', 
+app.get('/tptwitter/posts/:id', 
 	function(req, res){
 		if(req.params.id != '' && typeof req.params.id != 'undefined') {
-			client.zrevrange('post:' + req.params.id, 0, -1, //'withscores', 
+			client.zrevrange('posts:' + req.params.id, 0, -1, //'withscores', 
 				function (err, response) {
 					if(err){
 						throw err;
 						console.log(err);
 					}else{
-						res.json(response);
+						//on récupére le nom de lutilisateur
+						client.hget('user:'+ req.params.id, 'username', function(err, reply){
+							if(err){
+								throw err;
+								console.log(err);
+							}else{
+								//reponse json
+								res.json({userid : reply, posts : response});
+							}
+						});
 					}
 			});
 		}
