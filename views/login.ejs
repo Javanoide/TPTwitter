@@ -41,10 +41,10 @@
                data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
                success : function(result){
                     $('#ResultLogin').text(result.msg);
-                    alert(result.userid);
                     if(result.success==true){
                         var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
+                        form += '<input type="hidden" name="username" value="'+ result.username +'">';
                         $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
                     }
                }
