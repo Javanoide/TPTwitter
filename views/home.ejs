@@ -87,10 +87,13 @@
 		        function postMessage(){
 		           $.ajax({
 		               url : '/tptwitter/posts',
+		               dataType : 'json',
 		               type : 'POST',
 		               data : "userid=" + <%=userid %> + "&msg=" + $('#message').val(),
+		               success : function (result){
+		               		$('#message').val("");
+		               },
 		            });
-		           $('#message').val("");
 		        }
 
 		        function test(){
