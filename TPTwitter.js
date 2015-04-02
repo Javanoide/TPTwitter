@@ -2,7 +2,7 @@ var express = require('express');
 var redis = require('redis');
 var client = redis.createClient();
 var bodyParser = require('body-parser');
-var cookie = require('cookie-parser'); 
+var cookie = require('cookie-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var uuid = require('node-uuid');
 var async = require('async');
@@ -94,15 +94,15 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 				res.json({msg: 'Vous êtes incrit, vous pouvez desormais vous connecter :)'});
 			});
 		}
-		
+
 	}
-	
+
 });
 
 //ajoute un followers à un utilisateur
 app.post('/tptwitter/followers', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
-		&& typeof req.body.userid != 'undefined' 
+		&& typeof req.body.userid != 'undefined'
 		&& typeof req.body.followid != 'undefined'){
 		client.zadd( 'followers:' + req.body.userid, Date.now(), req.body.followid, function (err, response) {
 			if(err){
@@ -167,7 +167,7 @@ app.get('/tptwitter/followers/:userid', function(req, res){
 //ajoute un utilisateur à suivre
 app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
-		&& typeof req.body.userid != 'undefined' 
+		&& typeof req.body.userid != 'undefined'
 		&& typeof req.body.followid != 'undefined'){
 		client.zadd( 'following:' + req.body.userid, Date.now(), req.body.followid, function (err, response) {
 			if(err){
@@ -180,7 +180,7 @@ app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 //récupére ceux qu'un utilisateur suit (trie du plus ancien au plus recent)
 app.get('/tptwitter/followings/:userid', function(req, res){
 	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
-		client.zrange('following:' + req.params.userid, 0, -1, //'withscores', 
+		client.zrange('following:' + req.params.userid, 0, -1, //'withscores',
 			function (err, response) {
 				if(err){
 					throw err;
@@ -247,7 +247,7 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 });
 
 //récupére les poste d'un utilisateur (trie du plus recent au plus ancien)
-app.get('/tptwitter/posts/:userid', 
+app.get('/tptwitter/posts/:userid',
 	function(req, res){
 		if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
 			client.zrevrange('posts:' + req.params.userid, 0, -1, function (err, response) {

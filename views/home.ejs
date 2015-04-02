@@ -3,12 +3,28 @@
 <html>
 	<%- include header.ejs %>
 
-	<body>
-		
+	<script>
+		function getLastPost(){
+			$('#myStatus').fadeOut(400, function() {
+				$.ajax({
+					url : '/tptwitter/posts/' + <%= userid %>,
+					dataType : 'json',
+					type : 'GET',
+					success : function(result) {
+						$('#myStatus').text(result.posts[0]);
+						$('#myStatus').fadeIn(400);
+					}
+				});
+			});
+		}
+	</script>
+
+	<body onload="getLastPost()">
+
 		<div class='row'>
 			<legend class="col-lg-offset-1 col-lg-2 well bs-component"> Bienvenue <%=username %> </legend>
 		</div>
-		
+
 		<div class="row" >
 
 			<div class='col-lg-offset-1 col-lg-3'>
@@ -26,7 +42,7 @@
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs</p>
-					</div> 
+					</div>
 				</div>
 			</div>
 
@@ -45,10 +61,9 @@
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
 							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs</p>
-					</div> 
+					</div>
 				</div>
 			</div>
-
 
 			<!--Formulaire pour poster un message -->
 			<div class='col-lg-3'>
@@ -58,20 +73,19 @@
 					</div>
 					<div class-"panel-body">
 						<div class='col-lg-12'>
-							<h3 class="text-danger" id="myStatus" onload="test()"> </h3>
+							<h3 class="text-danger" id="myStatus"> </h3>
 						</div>
 					    <div class ='row'>
 					        <div class="col-lg-12">
 					            <div class="well bs-component">
 					                <legend>Quel est votre humeur aujourd'hui ?</legend>
-					            	<form class="form-horizontal" id="postForm"> 
+					            	<form class="form-horizontal" id="postForm">
 
 					                    <div class="form-group">
 
 
 					                        <div class="col-lg-10">
 					                            <input type="text" class="form-control" id="message" name="message" autofocus />
-					                            <p class="text-danger" id="ResultLogin"> </p>
 					                        </div>
 					                    </div>
 					                    <button class="btn btn-primary btn-lg-2" type="button" onclick="postMessage()"> Submit </button>
@@ -80,7 +94,7 @@
 					            </div>
 					        </div>
 					    </div>
-					</div> 
+					</div>
 				</div>
 			</div>
 		    <script>
@@ -92,14 +106,10 @@
 		               data : "userid=" + <%=userid %> + "&msg=" + $('#message').val(),
 		               success : function (result){
 		               		$('#message').val("");
-		               },
+											getLastPost();
+		               }
 		            });
 		        }
-
-		        function test(){
-		        	alert('test');
-		        }
-
 		        //document.cookie =name + "=" + value + expire;
 		    </script>
 
@@ -109,4 +119,3 @@
 
 	</body>
 </html>
-
