@@ -1,14 +1,157 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>Test Redis</title>
-        <style>
-            a {text-decoration: none; color: black;}
-        </style>
-    </head>
+	<%- include header.ejs %>
 
-    <body>
-        <p>Value not found in database :( </p>
-    </body>
+	<script>
+		setInterval(function(){setLivefeed();}, 300);
+
+		//fonction permettant de charger toutes les donnees (followers, livefeed, post)
+		function loadData(){
+			getLastPost();
+			setLivefeed();
+		}
+
+		//charge le dernier status poste
+		function getLastPost(){
+			$('#myStatus').fadeOut(400, function() {
+				$.ajax({
+					url : '/tptwitter/posts/' + <%= userid %>,
+					dataType : 'json',
+					type : 'GET',
+					success : function(result) {
+						$('#myStatus').text(result.posts[0]);
+						$('#myStatus').fadeIn(400);
+					}
+				});
+			});
+		}
+		//charge les followers
+		function setLivefeed(){
+			$.ajax({
+				url : '/tptwitter/followers/' + <%= userid %>,
+				dataType : 'json',
+				type : 'GET',
+				success : function(resultFoll) {
+					for(var i=0; i<resultFoll.followers.length; i++){
+
+						$.ajax({
+							url : '/tptwitter/login/' + resultFoll.followers[i],
+							dataType : 'json',
+							type : 'GET',
+							success : function(resultId) {
+								$.ajax({
+									url : '/tptwitter/posts/' + resultId.userid,
+									dataType : 'json',
+									type : 'GET',
+									success : function(resultPost) {
+										if(typeof resultId.login != 'undefined' && typeof resultPost.posts[0] != 'undefined'){
+											//trouve fonciton qui supprime le tag
+											var id = 'user' + resultId.userid
+											$('#' + id).remove();
+											$('#followersList').append('<li id="' + id + '" class="list-group-item">' + resultId.login + ' : ' + resultPost.posts[0] + '</li>');
+										}
+									}
+								});
+							}
+						});
+					}
+				}
+			});
+		}
+	</script>
+
+	<body onload="loadData()">
+
+		<div class='row'>
+			<legend class="col-lg-offset-1 col-lg-2 well bs-component"> Bienvenue <%=username %> </legend>
+		</div>
+
+		<div class="row" >
+
+			<div class='col-lg-offset-1 col-lg-3'>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class ="panel-title">Followers</h3>
+					</div>
+					<div class-"panel-body">
+						<ul class="list-group" id="followersList" >
+							<li class="list-group-item"></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+
+			<div class='col-lg-4'>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class ="panel-title">Livefeed</h3>
+					</div>
+					<div class-"panel-body">
+						<p>Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
+							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs</p>
+					</div>
+				</div>
+			</div>
+
+			<!--Formulaire pour poster un message -->
+			<div class='col-lg-3'>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class ="panel-title">Mon Humeur</h3>
+					</div>
+					<div class-"panel-body">
+						<div class='col-lg-12'>
+							<h3 class="text-danger" id="myStatus"> </h3>
+						</div>
+					    <div class ='row'>
+					        <div class="col-lg-12">
+					            <div class="well bs-component">
+					                <legend>Quel est votre humeur aujourd'hui ?</legend>
+					            	<form class="form-horizontal" id="postForm">
+
+					                    <div class="form-group">
+
+
+					                        <div class="col-lg-10">
+					                            <input type="text" class="form-control" id="message" name="message" autofocus />
+					                        </div>
+					                    </div>
+					                    <button class="btn btn-primary btn-lg-2" type="button" onclick="postMessage()"> Submit </button>
+
+					                </form>
+					            </div>
+					        </div>
+					    </div>
+					</div>
+				</div>
+			</div>
+		    <script>
+		        function postMessage(){
+		           $.ajax({
+		               url : '/tptwitter/posts',
+		               dataType : 'json',
+		               type : 'POST',
+		               data : "userid=" + <%=userid %> + "&msg=" + $('#message').val(),
+		               success : function (result){
+		               		$('#message').val("");
+											getLastPost();
+		               }
+		            });
+		        }
+		        //document.cookie =name + "=" + value + expire;
+		    </script>
+
+
+		</div>
+
+
+	</body>
 </html>
