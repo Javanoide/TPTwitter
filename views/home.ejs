@@ -4,6 +4,15 @@
 	<%- include header.ejs %>
 
 	<script>
+		setInterval(function() {alert('test');}, 300);
+
+		//fonction permettant de charger toutes les donnees (followers, livefeed, post)
+		function loadData(){
+			getLastPost();
+			getFollowers();
+		}
+
+		//charge le dernier status poste
 		function getLastPost(){
 			$('#myStatus').fadeOut(400, function() {
 				$.ajax({
@@ -17,9 +26,22 @@
 				});
 			});
 		}
+		//charge les followers
+		function getFollowers(){
+			$.ajax({
+				url : '/tptwitter/followers/' + <%= userid %>,
+				dataType : 'json',
+				type : 'GET',
+				success : function(result) {
+					for(var i=0; i<result.followers.length; i++){
+						$('#followersList').append('<li class="list-group-item">' + result.followers[i] + '</li>');
+					}
+				}
+			});
+		}
 	</script>
 
-	<body onload="getLastPost()">
+	<body onload="loadData()">
 
 		<div class='row'>
 			<legend class="col-lg-offset-1 col-lg-2 well bs-component"> Bienvenue <%=username %> </legend>
@@ -33,15 +55,9 @@
 						<h3 class ="panel-title">Followers</h3>
 					</div>
 					<div class-"panel-body">
-						<p>Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs,
-							Des trucs, Des trucs, Des trucs, Des trucs, Des trucs</p>
+						<ul class="list-group" id="followersList" >
+							<li class="list-group-item"></li>
+						</ul>
 					</div>
 				</div>
 			</div>
