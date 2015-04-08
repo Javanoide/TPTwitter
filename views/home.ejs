@@ -4,12 +4,12 @@
 	<%- include header.ejs %>
 
 	<script>
-		setInterval(function() {alert('test');}, 300);
+		setInterval(function(){setLivefeed();}, 300);
 
 		//fonction permettant de charger toutes les donnees (followers, livefeed, post)
 		function loadData(){
 			getLastPost();
-			getFollowers();
+			setLivefeed();
 		}
 
 		//charge le dernier status poste
@@ -27,14 +27,34 @@
 			});
 		}
 		//charge les followers
-		function getFollowers(){
+		function setLivefeed(){
 			$.ajax({
 				url : '/tptwitter/followers/' + <%= userid %>,
 				dataType : 'json',
 				type : 'GET',
-				success : function(result) {
-					for(var i=0; i<result.followers.length; i++){
-						$('#followersList').append('<li class="list-group-item">' + result.followers[i] + '</li>');
+				success : function(resultFoll) {
+					for(var i=0; i<resultFoll.followers.length; i++){
+
+						$.ajax({
+							url : '/tptwitter/login/' + resultFoll.followers[i],
+							dataType : 'json',
+							type : 'GET',
+							success : function(resultId) {
+								$.ajax({
+									url : '/tptwitter/posts/' + resultId.userid,
+									dataType : 'json',
+									type : 'GET',
+									success : function(resultPost) {
+										if(typeof resultId.login != 'undefined' && typeof resultPost.posts[0] != 'undefined'){
+											//trouve fonciton qui supprime le tag
+											var id = 'user' + resultId.userid
+											$('#' + id).remove();
+											$('#followersList').append('<li id="' + id + '" class="list-group-item">' + resultId.login + ' : ' + resultPost.posts[0] + '</li>');
+										}
+									}
+								});
+							}
+						});
 					}
 				}
 			});

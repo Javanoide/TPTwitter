@@ -99,6 +99,13 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 
 });
 
+//retourne l'userid correspondant au login
+app.get('/tptwitter/login/:login', function(req, res){
+	client.hget('users', req.params.login, function (err, response) {
+		res.json({userid : response, login : req.params.login});
+	});
+});
+
 //ajoute un followers à un utilisateur
 app.post('/tptwitter/followers', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
