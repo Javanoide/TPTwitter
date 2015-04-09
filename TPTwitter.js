@@ -1,6 +1,6 @@
 var express = require('express');
 var redis = require('redis');
-var client = redis.createClient();
+var client = redis.createClient(6379, '127.0.0.1', {}); //nécessite un serveur redis sur le port 6379 en localhost
 var bodyParser = require('body-parser');
 var cookie = require('cookie-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
