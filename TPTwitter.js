@@ -15,33 +15,8 @@ app.use(cookie());
 //enabling cors
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
-});
-
-///////////////////////////////////////////////
-//Routes
-///////////////////////////////////////////////
-app.get('/', function(req,res){
-	res.render('login.ejs');
-});
-//route de test
-app.get('/test', function(req,res){
-
-});
-
-app.post('/home', urlencodedParser, function(req,res){
-	console.log(req.body.userid + ' ' + req.body.username);
-	res.render('home.ejs', {userid: req.body.userid, username: req.body.username});
-});
-//test en get
-app.get('/home', function(req,res){
-	res.render('home.ejs');
-});
-
-app.get('/about', function(req,res){
-	res.render('about.ejs');
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
