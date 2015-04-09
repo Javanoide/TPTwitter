@@ -3,8 +3,9 @@
  	"version": "0.1.0",
  	"dependencies": {
  		"express": "~4.11.0",
+ 		"http-server": "~0.8.0",
  		"ejs": "~2.1.4",
- 		"redis" : "~0.12.1",
+ 		"redis": "~0.12.1",
  		"cookie-parser": "~1.3.4",
  		"body-parser": "~1.10.1",
  		"node-uuid": "~1.4.3",
@@ -12,9 +13,8 @@
  	},
  	 "scripts": {
     "postinstall": "bower install",
-
     "prestart": "npm install",
-    "start": "node TPTwitter.js"
+    "start": "http-server views/ -a 0.0.0.0 -p 8080 & node TPTwitter"
 	},
  	"author": "Florent Baudon",
  	"description": "TP Twitter cours NoSQL"
