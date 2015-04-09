@@ -2,16 +2,34 @@
 
 <html>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script> 
-        $(function(){
-          $("#header").load("header.html");
-        });
-    </script> 
+
     <div id="header"></div>
 
 
 	<script>
-		setInterval(function(){setLivefeed();}, 300);
+	    function getUrlParameter(sParam)
+		{
+		    var sPageURL = window.location.search.substring(1);
+		    var sURLVariables = sPageURL.split('&');
+		    for (var i = 0; i < sURLVariables.length; i++) 
+		    {
+		        var sParameterName = sURLVariables[i].split('=');
+		        if (sParameterName[0] == sParam) 
+		        {
+		            return sParameterName[1];
+		        }
+		    }
+		}   
+        $(function(){
+          $("#header").load("header.html");
+          userid = getUrlParameter('userid');
+          username = getUrlParameter('username');
+          $('#welcome').text('Bienvenue ' + username);
+          loadData();
+        });
+
+        //actualisation du livefeed
+		//setInterval(function(){setLivefeed();}, 5000);
 
 		//fonction permettant de charger toutes les donnees (followers, livefeed, post)
 		function loadData(){
@@ -19,11 +37,25 @@
 			setLivefeed();
 		}
 
+		function getUrlParameter(sParam)
+		{
+		    var sPageURL = window.location.search.substring(1);
+		    var sURLVariables = sPageURL.split('&');
+		    for (var i = 0; i < sURLVariables.length; i++) 
+		    {
+		        var sParameterName = sURLVariables[i].split('=');
+		        if (sParameterName[0] == sParam) 
+		        {
+		            return sParameterName[1];
+		        }
+		    }
+		}   
+
 		//charge le dernier status poste
 		function getLastPost(){
 			$('#myStatus').fadeOut(400, function() {
 				$.ajax({
-					url : '/tptwitter/posts/' + <%= userid %>,
+					url : 'http://localhost:8000/tptwitter/posts/' + userid,
 					dataType : 'json',
 					type : 'GET',
 					success : function(result) {
@@ -36,19 +68,19 @@
 		//charge les followers
 		function setLivefeed(){
 			$.ajax({
-				url : '/tptwitter/followers/' + <%= userid %>,
+				url : 'http://localhost:8000/tptwitter/followers/' + userid,
 				dataType : 'json',
 				type : 'GET',
 				success : function(resultFoll) {
 					for(var i=0; i<resultFoll.followers.length; i++){
 
 						$.ajax({
-							url : '/tptwitter/login/' + resultFoll.followers[i],
+							url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followers[i],
 							dataType : 'json',
 							type : 'GET',
 							success : function(resultId) {
 								$.ajax({
-									url : '/tptwitter/posts/' + resultId.userid,
+									url : 'http://localhost:8000/tptwitter/posts/' + resultId.userid,
 									dataType : 'json',
 									type : 'GET',
 									success : function(resultPost) {
@@ -68,10 +100,10 @@
 		}
 	</script>
 
-	<body onload="loadData()">
+	<body>
 
 		<div class='row'>
-			<legend class="col-lg-offset-1 col-lg-2 well bs-component"> Bienvenue <%=username %> </legend>
+			<legend class="col-lg-offset-1 col-lg-2 well bs-component" id='welcome'> </legend>
 		</div>
 
 		<div class="row" >
@@ -124,13 +156,13 @@
 		    <script>
 		        function postMessage(){
 		           $.ajax({
-		               url : '/tptwitter/posts',
+		               url : 'http://localhost:8000/tptwitter/posts',
 		               dataType : 'json',
 		               type : 'POST',
-		               data : "userid=" + <%=userid %> + "&msg=" + $('#message').val(),
+		               data : "userid=" + userid + "&msg=" + $('#message').val(),
 		               success : function (result){
 		               		$('#message').val("");
-											getLastPost();
+							getLastPost();
 		               }
 		            });
 		        }

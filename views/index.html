@@ -50,7 +50,7 @@
                         var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
                         form += '<input type="hidden" name="username" value="'+ result.username +'">';
-                        $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
+                        $('<form action="/home.html" method="GET">'+form+'</form>').appendTo('body').submit();
                     }
                }
             });

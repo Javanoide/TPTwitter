@@ -11,9 +11,11 @@ var app = express();
 
 //use cookie
 app.use(cookie());
+
 //enabling cors
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -245,7 +247,7 @@ app.get('/tptwitter/followings/:userid', function(req, res){
 app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.msg != '' && typeof req.body.userid != 'undefined' && typeof req.body.msg != 'undefined'){
 		client.hget('user:' + req.body.userid, 'auth', function (err, response) {
-			if(response == req.cookies.auth){
+			//if(response == req.cookies.auth){
 				client.zadd( 'posts:' + req.body.userid, Date.now(), req.body.msg, function (err, response) {
 					console.log('posts:' + "   " + req.body.userid, Date.now() + "  " + req.body.msg);
 					if(err){
@@ -255,7 +257,7 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 						res.json({succes : true});
 					}
 				});
-			}
+			//}
 		})
 	}
 });
