@@ -2,11 +2,12 @@
 
 <html>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
     <div id="header"></div>
 
-
 	<script>
+		//fonction pour récupérer les paramétres get
 	    function getUrlParameter(sParam)
 		{
 		    var sPageURL = window.location.search.substring(1);
@@ -19,17 +20,20 @@
 		            return sParameterName[1];
 		        }
 		    }
-		}   
+		} 
+		//fonction pour charger le header  
         $(function(){
           $("#header").load("header.html");
           userid = getUrlParameter('userid');
           username = getUrlParameter('username');
           $('#welcome').text('Bienvenue ' + username);
           loadData();
+
+
         });
 
         //actualisation du livefeed
-		//setInterval(function(){setLivefeed();}, 5000);
+		setInterval(function(){setLivefeed();}, 5000);
 
 		//fonction permettant de charger toutes les donnees (followers, livefeed, post)
 		function loadData(){
@@ -65,17 +69,17 @@
 				});
 			});
 		}
-		//charge les followers
+		//charge les messages de ceux que l'on suit
 		function setLivefeed(){
 			$.ajax({
-				url : 'http://localhost:8000/tptwitter/followers/' + userid,
+				url : 'http://localhost:8000/tptwitter/followings/' + userid,
 				dataType : 'json',
 				type : 'GET',
 				success : function(resultFoll) {
-					for(var i=0; i<resultFoll.followers.length; i++){
+					for(var i=0; i<resultFoll.followings.length; i++){
 
 						$.ajax({
-							url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followers[i],
+							url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followings[i],
 							dataType : 'json',
 							type : 'GET',
 							success : function(resultId) {
@@ -99,7 +103,6 @@
 			});
 		}
 	</script>
-
 	<body>
 
 		<div class='row'>
