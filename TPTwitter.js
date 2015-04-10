@@ -108,7 +108,7 @@ app.get('/tptwitter/login/:login', function(req, res){
 						console.log(err);
 						res.json({result : 'failed'});
 					}else{
-						req.json({result: "success"});
+						res.json({result: "success"});
 					}
 				});
 			}
@@ -185,7 +185,7 @@ app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 						console.log(err);
 						res.json({result : "failed"});
 					}else{
-						req.json({result: "success"});
+						res.json({result: "success"});
 					}
 				});
 			}
