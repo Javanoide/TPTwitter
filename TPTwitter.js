@@ -58,24 +58,20 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 		//on verfifie que la confirmation du password est juste
 		if(req.body.newpasswd != req.body.newpasswd2){
 			//si elle ne l'est pas en renvoie à l'accueil (prévoir msg erreur)
-			res.json({msg: 'Mots de passes différents'});
+			res.json({result: false, msg : "Not the same password"});
 		}else{
-			var id;
-			//on incrémente la variable userid
-			client.incr('userid');
-			//on la récupére
-			client.get('userid', function(err, reply){
-				if(reply){
-					id = reply;
+			client.hget('users', req.body.newlogin, function(err, reply){
+				if(reply==null){
+					var id = uuid.v4();
+					//ensuite on crée un hmset avec pour intitulé l'id et contenant le login et le mot de passe de l'utilisateur
+					client.hmset('user:'+id, 'username', req.body.newlogin, 'password', req.body.newpasswd);
+					//on crée un hset pour pouvoir retrouvé l'id de l'utilisateur à partir de son login
+					client.hset('users', req.body.newlogin, id);
+					//on redirige vers l'accueil (prévoir msg de confirmation)
+					res.json({result : true, msg: 'You can now you connect :)'});
 				}else{
-					res.json({msg: 'Echec de l\'inscription, veuillez rééssayer plus tard'});
+					res.json({result : false, msg: 'Username not available'});
 				}
-				//ensuite on crée un hmset avec pour intitulé l'id et contenant le login et le mot de passe de l'utilisateur
-				client.hmset('user:'+id, 'username', req.body.newlogin, 'password', req.body.newpasswd);
-				//on crée un hset pour pouvoir retrouvé l'id de l'utilisateur à partir de son login
-				client.hset('users', req.body.newlogin, id);
-				//on redirige vers l'accueil (prévoir msg de confirmation)
-				res.json({msg: 'Vous êtes incrit, vous pouvez desormais vous connecter :)'});
 			});
 		}
 
@@ -90,31 +86,6 @@ app.get('/tptwitter/login/:login', function(req, res){
 	});
 });
 
-/*****************Surement à supprimer ***/
-//ajoute un followers à un utilisateur
-/*app.post('/tptwitter/followers', urlencodedParser, function(req, res){
-	if(req.body.userid != '' && req.body.followid != ''
-		&& typeof req.body.userid != 'undefined'
-		&& typeof req.body.followid != 'undefined'){
-		client.zadd( 'followers:' + req.body.userid, Date.now(), req.body.followid, function (err, response) {
-			if(err){
-				throw err;
-				console.log(err);
-				res.json({result : "failed"});
-			}else{
-				client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
-					if(err){
-						throw err;
-						console.log(err);
-						res.json({result : 'failed'});
-					}else{
-						res.json({result: "success"});
-					}
-				});
-			}
-		});
-	}//ajouter msg erreur
-});*/
 //récupére les followers d'un l'utilisateur (trie du plus ancien au plus recent)
 app.get('/tptwitter/followers/:userid', function(req, res){
 	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
@@ -248,7 +219,6 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 		client.hget('user:' + req.body.userid, 'auth', function (err, response) {
 			//if(response == req.cookies.auth){
 				client.zadd( 'posts:' + req.body.userid, Date.now(), req.body.msg, function (err, response) {
-					console.log('posts:' + "   " + req.body.userid, Date.now() + "  " + req.body.msg);
 					if(err){
 						throw err;
 						console.log(err);

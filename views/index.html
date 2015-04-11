@@ -28,7 +28,7 @@
 
                         <div class="col-lg-10">
                             <input type="password" class="form-control" id="passwd" name="passwd" autofocus />
-                            <p class="text-danger" id="ResultLogin"> </p>
+                            <p class="text-success" id="ResultLogin"> </p>
                         </div>
                     </div>
                     <button class="btn btn-primary btn-lg-2" type="button" onclick="loginCheck()"> Submit </button>
@@ -45,13 +45,17 @@
                type : 'POST',
                data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
                success : function(result){
-                    $('#ResultLogin').text(result.msg);
-                    if(result.success==true){
+                    if(result.success){
+                        $('#ResultLogin').attr('class', "text-success");
                         var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
                         form += '<input type="hidden" name="username" value="'+ result.username +'">';
                         $('<form action="/home.html" method="GET">'+form+'</form>').appendTo('body').submit();
+                    }else{
+                        $('#ResultLogin').attr('class', "text-danger");
                     }
+
+                    $('#ResultLogin').text(result.msg);
                }
             });
         }
@@ -85,7 +89,7 @@
                         <label class="col-lg-2" for="newPasswd2">Retype your Password</label>
                         <div class="col-lg-10">
                             <input type="password" class="form-control" id="newPasswd2" name="newPasswd2" autofocus />
-                            <p class="text-danger" id="ResultNewUser"> </p>
+                            <p id="ResultNewUser"> </p>
                         </div>
                     </div>
                     <button class="btn btn-primary btn-lg-2" type="button" onclick="newUserCheck()"> Submit </button>
@@ -101,6 +105,11 @@
                type : 'POST',
                data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
                success : function(result){
+                    if(result.result){
+                        $('#ResultNewUser').attr('class', "text-success");
+                    }else{
+                        $('#ResultNewUser').attr('class', "text-danger");
+                    }
                     $('#ResultNewUser').text(result.msg);
                }
             });
