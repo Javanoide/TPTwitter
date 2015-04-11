@@ -39,6 +39,7 @@
 		function loadData(){
 			getLastPost();
 			setLivefeed();
+			getFollowers();
 		}
 
 		function getUrlParameter(sParam)
@@ -77,12 +78,13 @@
 				type : 'GET',
 				success : function(resultFoll) {
 					for(var i=0; i<resultFoll.followings.length; i++){
-
+						//récupére login correspondant à l'user id
 						$.ajax({
 							url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followings[i],
 							dataType : 'json',
 							type : 'GET',
 							success : function(resultId) {
+								//récupére les posts
 								$.ajax({
 									url : 'http://localhost:8000/tptwitter/posts/' + resultId.userid,
 									dataType : 'json',
@@ -92,7 +94,7 @@
 											//trouve fonciton qui supprime le tag
 											var id = 'user' + resultId.userid
 											$('#' + id).remove();
-											$('#followersList').append('<li id="' + id + '" class="list-group-item">' + resultId.login + ' : ' + resultPost.posts[0] + '</li>');
+											$('#livefeedList').append('<li id="' + id + '" class="list-group-item">' + resultId.login + ' : ' + resultPost.posts[0] + '</li>');
 										}
 									}
 								});
@@ -102,6 +104,32 @@
 				}
 			});
 		}
+
+		//get followers
+		function getFollowers(){
+			$.ajax({
+				url : 'http://localhost:8000/tptwitter/followers/' + userid,
+				dataType : 'json',
+				type : 'GET',
+				success : function(resultFoll) {
+					for(var i=0; i<resultFoll.followers.length; i++){
+						$.ajax({
+							url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followers[i],
+							dataType : 'json',
+							type : 'GET',
+							success : function(resultId) {
+								if(typeof resultId.login != 'undefined'){
+									$('#followersList').append('<li " class="list-group-item">' + resultId.login + '</li>');
+								}
+							}
+
+						});
+					}
+				}
+			});
+		}
+
+
 	</script>
 	<body>
 
@@ -111,13 +139,27 @@
 
 		<div class="row" >
 
-			<div class='col-lg-offset-1 col-lg-7'>
+			<!--Liste es followers -->
+			<div class='col-lg-offset-1 col-lg-2'>
 				<div class="panel panel-primary">
 					<div class="panel-heading">
 						<h3 class ="panel-title">Followers</h3>
 					</div>
 					<div class-"panel-body">
 						<ul class="list-group" id="followersList" >
+							<li class="list-group-item"></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!--Livefeed -->
+			<div class='col-lg-5'>
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<h3 class ="panel-title">Livefeed</h3>
+					</div>
+					<div class-"panel-body">
+						<ul class="list-group" id="livefeedList" >
 							<li class="list-group-item"></li>
 						</ul>
 					</div>
