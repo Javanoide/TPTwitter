@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 
 <html>
-
-    <%- include header.ejs %>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script> 
+        $(function(){
+          $("#header").load("header.html");
+        });
+    </script> 
+    <div id="header"></div>
 
     <!-- formulaire login -->
     <div class ='row'>
@@ -36,7 +41,7 @@
     <script>
         function loginCheck(){
            $.ajax({
-               url : '/tptwitter/login',
+               url : 'http://localhost:8000/tptwitter/login',
                type : 'POST',
                data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
                success : function(result){
@@ -45,7 +50,7 @@
                         var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
                         form += '<input type="hidden" name="username" value="'+ result.username +'">';
-                        $('<form action="/home" method="POST">'+form+'</form>').appendTo('body').submit();
+                        $('<form action="/home.html" method="GET">'+form+'</form>').appendTo('body').submit();
                     }
                }
             });
@@ -92,7 +97,7 @@
     <script>
         function newUserCheck(){
            $.ajax({
-               url : '/tptwitter/newuser',
+               url : 'http://localhost:8000/tptwitter/newuser',
                type : 'POST',
                data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
                success : function(result){

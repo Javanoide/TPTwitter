@@ -1,6 +1,6 @@
 var express = require('express');
 var redis = require('redis');
-var client = redis.createClient();
+var client = redis.createClient(6379, '127.0.0.1', {}); //nécessite un serveur redis sur le port 6379 en localhost
 var bodyParser = require('body-parser');
 var cookie = require('cookie-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
@@ -9,30 +9,14 @@ var async = require('async');
 
 var app = express();
 
+//use cookie
 app.use(cookie());
 
-///////////////////////////////////////////////
-//Routes
-///////////////////////////////////////////////
-app.get('/', function(req,res){
-	res.render('login.ejs');
-});
-//route de test
-app.get('/test', function(req,res){
-
-});
-
-app.post('/home', urlencodedParser, function(req,res){
-	console.log(req.body.userid + ' ' + req.body.username);
-	res.render('home.ejs', {userid: req.body.userid, username: req.body.username});
-});
-//test en get
-app.get('/home', function(req,res){
-	res.render('home.ejs');
-});
-
-app.get('/about', function(req,res){
-	res.render('about.ejs');
+//enabling cors
+app.use(function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,8 +90,9 @@ app.get('/tptwitter/login/:login', function(req, res){
 	});
 });
 
+/*****************Surement à supprimer ***/
 //ajoute un followers à un utilisateur
-app.post('/tptwitter/followers', urlencodedParser, function(req, res){
+/*app.post('/tptwitter/followers', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
 		&& typeof req.body.userid != 'undefined'
 		&& typeof req.body.followid != 'undefined'){
@@ -115,10 +100,21 @@ app.post('/tptwitter/followers', urlencodedParser, function(req, res){
 			if(err){
 				throw err;
 				console.log(err);
+				res.json({result : "failed"});
+			}else{
+				client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+						res.json({result : 'failed'});
+					}else{
+						res.json({result: "success"});
+					}
+				});
 			}
 		});
 	}//ajouter msg erreur
-});
+});*/
 //récupére les followers d'un l'utilisateur (trie du plus ancien au plus recent)
 app.get('/tptwitter/followers/:userid', function(req, res){
 	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
@@ -176,10 +172,22 @@ app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
 		&& typeof req.body.userid != 'undefined'
 		&& typeof req.body.followid != 'undefined'){
-		client.zadd( 'following:' + req.body.userid, Date.now(), req.body.followid, function (err, response) {
+		var date = Date.now();
+		client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
 			if(err){
 				throw err;
 				console.log(err);
+				res.json({result : 'failed'});
+			}else{
+				client.zadd( 'followers:' + req.body.followid, date, req.body.userid, function (err, response) {
+					if(err){
+						throw err;
+						console.log(err);
+						res.json({result : "failed"});
+					}else{
+						res.json({result: "success"});
+					}
+				});
 			}
 		});
 	}//ajouter msg erreur
@@ -238,7 +246,7 @@ app.get('/tptwitter/followings/:userid', function(req, res){
 app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.msg != '' && typeof req.body.userid != 'undefined' && typeof req.body.msg != 'undefined'){
 		client.hget('user:' + req.body.userid, 'auth', function (err, response) {
-			if(response == req.cookies.auth){
+			//if(response == req.cookies.auth){
 				client.zadd( 'posts:' + req.body.userid, Date.now(), req.body.msg, function (err, response) {
 					console.log('posts:' + "   " + req.body.userid, Date.now() + "  " + req.body.msg);
 					if(err){
@@ -248,33 +256,42 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 						res.json({succes : true});
 					}
 				});
-			}
+			//}
 		})
 	}
 });
 
 //récupére les poste d'un utilisateur (trie du plus recent au plus ancien)
-app.get('/tptwitter/posts/:userid',
-	function(req, res){
-		if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
-			client.zrevrange('posts:' + req.params.userid, 0, -1, function (err, response) {
-					if(err){
-						throw err;
-						console.log(err);
-					}else{
-						//on récupére le nom de lutilisateur
-						client.hget('user:'+ req.params.userid, 'username', function(err, reply){
-							if(err){
-								throw err;
-								console.log(err);
-							}else{
-								//reponse json
-								res.json({userid : reply, posts : response});
-							}
-						});
-					}
-			});
+app.get('/tptwitter/posts/:userid', function(req, res){
+	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
+		client.zrevrange('posts:' + req.params.userid, 0, -1, function (err, response) {
+				if(err){
+					throw err;
+					console.log(err);
+				}else{
+					//on récupére le nom de lutilisateur
+					client.hget('user:'+ req.params.userid, 'username', function(err, reply){
+						if(err){
+							throw err;
+							console.log(err);
+						}else{
+							//reponse json
+							res.json({userid : reply, posts : response});
+						}
+					});
+				}
+		});
+	}
+});
+
+app.get('/tptwitter/users', function(req, res){
+	client.hgetall('users', function (err, response){
+		if(err){
+			throw err;
+		}else{
+			res.json(response);
 		}
+	});
 });
 
 app.use(function(req, res, next){
@@ -282,4 +299,4 @@ app.use(function(req, res, next){
 	res.status(404).send('Page not found');
 })
 
-app.listen(8080);
+app.listen(8000);
