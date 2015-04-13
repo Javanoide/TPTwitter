@@ -38,13 +38,13 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 						client.hset('user:'+ id, 'auth', cookieid);
 						res.cookie("auth", cookieid, { expires: new Date(Date.now() + 1000 * 60 * 10), httpOnly: true });
 						//on renvoie que loggin à reussi
-						res.json({success: true, userid: id, username: req.body.login, msg: 'success login'});
+						res.json({result: true, userid: id, username: req.body.login, msg: 'success login'});
 					}else{
-						res.json({success: false, msg: 'Echec de la connexion'});
+						res.json({result: false, msg: 'Connection failed'});
 					}
 				});
 			}else{
-				res.json({success: false, msg: 'Echec de la connexion'});
+				res.json({result: false, msg: 'Connection failed'});
 			}
 		});
 	}
@@ -82,7 +82,12 @@ app.post('/tptwitter/newuser', urlencodedParser, function(req, res){
 //retourne l'userid correspondant au login
 app.get('/tptwitter/login/:login', function(req, res){
 	client.hget('users', req.params.login, function (err, response) {
-		res.json({userid : response, login : req.params.login});
+		if(err){
+			console.log(err);
+			res.json({result : false, msg : 'Failed to reach database'});	
+		}else{ 
+			res.json({result : true, userid : response, login : req.params.login});
+		}
 	});
 });
 
@@ -117,16 +122,16 @@ app.get('/tptwitter/followers/:userid', function(req, res){
 					function(err){
 						if(err){
 							console.log(err);
-							throw err;
+							res.json({result : false, msg : 'Failed to reach database'});
 						}else{
 							//on récupére le nom de lutilisateur
 							client.hget('user:'+ req.params.userid, 'username', function(err, reply){
 								if(err){
-									throw err;
 									console.log(err);
+									res.json({result : false, msg : 'Failed to reach database'});
 								}else{
 									//reponse json
-									res.json({userid : reply, followers : followersNames});
+									res.json({result : true, userid : reply, followers : followersNames});
 								}
 							});
 						}
@@ -146,17 +151,16 @@ app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 		var date = Date.now();
 		client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
 			if(err){
-				throw err;
 				console.log(err);
-				res.json({result : 'failed'});
+				res.json({result : false, msg : 'Failed to reach database'});
 			}else{
 				client.zadd( 'followers:' + req.body.followid, date, req.body.userid, function (err, response) {
 					if(err){
 						throw err;
 						console.log(err);
-						res.json({result : "failed"});
+						res.json({result : false, msg : 'Failed to reach database'});
 					}else{
-						res.json({result: "success"});
+						res.json({result: true, msg : 'Success'});
 					}
 				});
 			}
@@ -169,8 +173,8 @@ app.get('/tptwitter/followings/:userid', function(req, res){
 		client.zrange('following:' + req.params.userid, 0, -1, //'withscores',
 			function (err, response) {
 				if(err){
-					throw err;
 					console.log(err);
+					res.json({result : false, msg : 'Failed to reach database'});
 				}else{
 				//on stocke le resultat dans un tableau
 				var idList = response;
@@ -198,11 +202,11 @@ app.get('/tptwitter/followings/:userid', function(req, res){
 							//on récupére le nom de lutilisateur
 							client.hget('user:'+ req.params.userid, 'username', function(err, reply){
 								if(err){
-									throw err;
 									console.log(err);
+									res.json({result : false, msg : 'Failed to reach database'});
 								}else{
 									//reponse json
-									res.json({userid : reply, followings : followingsNames});
+									res.json({result : true, userid : reply, followings : followingsNames});
 								}
 							});
 						}
@@ -220,10 +224,10 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 			//if(response == req.cookies.auth){
 				client.zadd( 'posts:' + req.body.userid, Date.now(), req.body.msg, function (err, response) {
 					if(err){
-						throw err;
 						console.log(err);
+						res.json({result : false, msg : 'Failed to reach database'});
 					}else{
-						res.json({succes : true});
+						res.json({result: true, msg : 'Post add successfully'});
 					}
 				});
 			//}
@@ -236,17 +240,17 @@ app.get('/tptwitter/posts/:userid', function(req, res){
 	if(req.params.userid != '' && typeof req.params.userid != 'undefined') {
 		client.zrevrange('posts:' + req.params.userid, 0, -1, function (err, response) {
 				if(err){
-					throw err;
 					console.log(err);
+					res.json({result : false, msg : 'Failed to reach database'});
 				}else{
 					//on récupére le nom de lutilisateur
 					client.hget('user:'+ req.params.userid, 'username', function(err, reply){
 						if(err){
-							throw err;
 							console.log(err);
+							res.json({result : false, msg : 'Failed to reach database'});
 						}else{
 							//reponse json
-							res.json({userid : reply, posts : response});
+							res.json({result : true, userid : reply, posts : response});
 						}
 					});
 				}
@@ -257,7 +261,8 @@ app.get('/tptwitter/posts/:userid', function(req, res){
 app.get('/tptwitter/users', function(req, res){
 	client.hgetall('users', function (err, response){
 		if(err){
-			throw err;
+			console.log(err);
+			res.json({result : false, msg : 'Failed to reach database'});
 		}else{
 			res.json(response);
 		}

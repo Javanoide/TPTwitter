@@ -45,7 +45,7 @@
                type : 'POST',
                data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
                success : function(result){
-                    if(result.success){
+                    if(result.result){
                         $('#ResultLogin').attr('class', "text-success");
                         var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
