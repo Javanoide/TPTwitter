@@ -47,10 +47,11 @@
                success : function(result){
                     if(result.result){
                         $('#ResultLogin').attr('class', "text-success");
-                        var form = '';
+                        /*var form = '';
                         form += '<input type="hidden" name="userid" value="'+ result.userid +'">';
                         form += '<input type="hidden" name="username" value="'+ result.username +'">';
-                        $('<form action="/home.html" method="GET">'+form+'</form>').appendTo('body').submit();
+                        $('<form action="/home.html" method="GET">'+form+'</form>').appendTo('body').submit();*/
+                        window.location = "http://localhost:8080/home.html?userid=" +result.userid + "&username=" + result.username;
                     }else{
                         $('#ResultLogin').attr('class', "text-danger");
                     }
