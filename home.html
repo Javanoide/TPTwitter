@@ -15,11 +15,8 @@
 	} 
 	//fonction pour charger le header  
     $(function(){
-      alert(cookieuuid);
-      $('#welcome').text('Bienvenue ' + username);
-      loadData();
-
-
+		$('#welcome').text('Bienvenue ' + username);
+		loadData();
     });
 
     //actualisation du livefeed
@@ -194,7 +191,7 @@
 	               url : 'http://localhost:8000/tptwitter/posts',
 	               dataType : 'json',
 	               type : 'POST',
-	               data : "userid=" + userid + "&msg=" + $('#message').val(),
+	               data : "userid=" + userid + "&msg=" + $('#message').val() + "&cookieuuid=" + cookieuuid,
 	               success : function (result){
 	               		$('#message').val("");
 						getLastPost();

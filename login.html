@@ -39,6 +39,9 @@
                     username = result.username;
                     userid = result.userid;
                     cookieuuid = result.cookieuuid;
+                    $.cookie('cookieuuid', cookieuuid);
+                    $.cookie('username', username);
+                    $.cookie('userid', userid);
                     $('#body').load('home.html');
                 }else{
                     $('#ResultLogin').attr('class', "text-danger");

@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.min.css">
     <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <!--<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="/bower_components/jquery.cookie/jquery.cookie.js"></script>
     
     <title>TP Twitter</title>
     <style>
@@ -44,12 +45,12 @@
     username = '';
     userid = '';
     cookieuuid = '';
-    $(function(){
+    /*$(function(){
         $('#body').load('login.html');
-    });
+    });*/
     
     //fonction initialisant l'autocomplétion
-    /*$(function(){
+    $(function(){
         $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
         $.ajax({
             url : 'http://localhost:8000/tptwitter/users/',
@@ -65,7 +66,7 @@
                            url : 'http://localhost:8000/tptwitter/followings',
                            dataType : 'json',
                            type : 'POST',
-                           data : "userid=" + userid + "&followid=" + result[ui.item.value],
+                           data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
                            success : function (response){
                                 if(response.result){
                                     alert('You follow ' +  name);
@@ -78,9 +79,32 @@
                 });
             }
         });
-    });*/
+    });
 </script>
-
+<script>
+//verifie les cookies au démarrage
+    $(function(){
+        cookieuuid = $.cookie('cookieuuid');
+        username = $.cookie('username');
+        userid = $.cookie('userid');
+         $.ajax({
+           url : 'http://localhost:8000/tptwitter/checkcookie',
+           dataType : 'json',
+           type : 'POST',
+           data : "userid=" + userid + "&cookieuuid=" + cookieuuid,
+           success : function (response){
+                if(response.result){
+                    $('#body').load('home.html');
+                }else{
+                    username = '';
+                    userid = '';
+                    cookieuuid = '';
+                    $('#body').load('login.html');
+                }
+           }
+       });
+    });
+</script>
 <div id="body">
 
 </div>

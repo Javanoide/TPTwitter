@@ -35,7 +35,9 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 					if(reply && password == req.body.passwd){
 						//création d'un cookie pour l'utilisateur qui vient de se logger
 						cookieid = uuid.v4();
+						//stocke le cookie
 						client.hset('user:'+ id, 'auth', cookieid);
+						client.hset('cookie', cookieid, 'user:' +id);
 						//on renvoie que loggin à reussi
 						res.json({result: true, cookieuuid : cookieid, userid: id, username: req.body.login, msg: 'success login'});
 					}else{
@@ -147,19 +149,25 @@ app.post('/tptwitter/followings/', urlencodedParser, function(req, res){
 	if(req.body.userid != '' && req.body.followid != ''
 		&& typeof req.body.userid != 'undefined'
 		&& typeof req.body.followid != 'undefined'){
-		var date = Date.now();
-		client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
-			if(err){
-				console.log(err);
-				res.json({result : false, msg : 'Failed to reach database'});
-			}else{
-				client.zadd( 'followers:' + req.body.followid, date, req.body.userid, function (err, response) {
+		client.hget('user:' + req.body.userid, 'auth', function (err, response) {
+
+			console.log('serv : ' + response + '   body : ' + req.body.cookieuuid);
+			if(response == req.body.cookieuuid){	
+				var date = Date.now();
+				client.zadd( 'following:' + req.body.userid, date, req.body.followid, function (err, response) {
 					if(err){
-						throw err;
 						console.log(err);
 						res.json({result : false, msg : 'Failed to reach database'});
 					}else{
-						res.json({result: true, msg : 'Success'});
+						client.zadd( 'followers:' + req.body.followid, date, req.body.userid, function (err, response) {
+							if(err){
+								throw err;
+								console.log(err);
+								res.json({result : false, msg : 'Failed to reach database'});
+							}else{
+								res.json({result: true, msg : 'Success'});
+							}
+						});
 					}
 				});
 			}
@@ -218,9 +226,11 @@ app.get('/tptwitter/followings/:userid', function(req, res){
 
 //ajoute le post d'un utilisateur
 app.post('/tptwitter/posts', urlencodedParser, function(req, res){
-	if(req.body.userid != '' && req.body.msg != '' && typeof req.body.userid != 'undefined' && typeof req.body.msg != 'undefined'){
+	if(req.body.userid != '' && req.body.msg != '' && req.body.cookieuuid !='' && 
+		typeof req.body.userid != 'undefined' && typeof req.body.msg != 'undefined' && typeof req.body.cookieuuid != 'undefined'){
+		
 		client.hget('user:' + req.body.userid, 'auth', function (err, response) {
-			//if(response == req.cookies.auth){
+			if(response == req.body.cookieuuid){
 				client.zadd( 'posts:' + req.body.userid, Date.now(), req.body.msg, function (err, response) {
 					if(err){
 						console.log(err);
@@ -229,8 +239,10 @@ app.post('/tptwitter/posts', urlencodedParser, function(req, res){
 						res.json({result: true, msg : 'Post add successfully'});
 					}
 				});
-			//}
+			}
 		})
+	}else{
+		res.json({result : false, msg : 'Bad Query'});
 	}
 });
 
@@ -266,6 +278,23 @@ app.get('/tptwitter/users', function(req, res){
 			res.json(response);
 		}
 	});
+});
+
+app.post('/tptwitter/checkcookie', urlencodedParser, function(req, res){
+	if(req.body.cookieuuid != '' && req.body.userid != ''){
+		client.hget('user:' + req.body.userid, 'auth', function (err, response){
+			if(err){
+				console.log(err);
+				res.json({result : false, msg : 'Failed to reach database'});
+			}else{
+				if(response == req.body.cookieuuid){
+					res.json({result : true, msg : 'Cookie valid'});
+				}else{
+					res.json({result : false, msg : 'Bad cookie'});
+				}
+			}
+		});
+	}
 });
 
 app.use(function(req, res, next){
