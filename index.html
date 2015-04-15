@@ -3,9 +3,13 @@
     <title>TP Twitter</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.min.css">
-    <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+    <link rel="stylesheet" href="/themes/bootstrap.min.css">
+    <link rel="stylesheet" href="/themes/bootstrap.css">
+
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
+    <script src="/bower_components/jquery.cookie/jquery.cookie.js"></script>
     
     <title>TP Twitter</title>
     <style>
@@ -40,7 +44,12 @@
 </nav>
 
 <script>
-    $(function(){
+    username = '';
+    userid = '';
+    cookieuuid = '';
+    
+    //fonction initialisant l'autocomplétion
+    function initAutocompleteBar(){
         $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
         $.ajax({
             url : 'http://localhost:8000/tptwitter/users/',
@@ -56,7 +65,7 @@
                            url : 'http://localhost:8000/tptwitter/followings',
                            dataType : 'json',
                            type : 'POST',
-                           data : "userid=" + userid + "&followid=" + result[ui.item.value],
+                           data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
                            success : function (response){
                                 if(response.result){
                                     alert('You follow ' +  name);
@@ -69,5 +78,31 @@
                 });
             }
         });
+    }
+//verifie les cookies au démarrage
+    $(function(){
+        cookieuuid = $.cookie('cookieuuid');
+        username = $.cookie('username');
+        userid = $.cookie('userid');
+         $.ajax({
+           url : 'http://localhost:8000/tptwitter/checkcookie',
+           dataType : 'json',
+           type : 'POST',
+           data : "userid=" + userid + "&cookieuuid=" + cookieuuid,
+           success : function (response){
+                if(response.result){
+                    initAutocompleteBar();
+                    $('#body').load('/views/home.html');
+                }else{
+                    username = '';
+                    userid = '';
+                    cookieuuid = '';
+                    $('#body').load('/views/login.html');
+                }
+           }
+       });
     });
 </script>
+<div id="body">
+
+</div>

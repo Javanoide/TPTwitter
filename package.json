@@ -14,7 +14,7 @@
  	 "scripts": {
     "postinstall": "bower install",
     "prestart": "npm install",
-    "start": "http-server views/ -a 0.0.0.0 -p 8080 & node TPTwitter"
+    "start": "http-server -a 0.0.0.0 -p 8080 & node TPTwitter"
 	},
  	"author": "Florent Baudon",
  	"description": "TP Twitter cours NoSQL"
