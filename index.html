@@ -3,10 +3,12 @@
     <title>TP Twitter</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
+
     <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.min.css">
     <link rel="stylesheet" href="//bootswatch.com/flatly/bootstrap.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="/bower_components/jquery.cookie/jquery.cookie.js"></script>
     
     <title>TP Twitter</title>
@@ -51,34 +53,36 @@
     
     //fonction initialisant l'autocomplétion
     $(function(){
-        $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
-        $.ajax({
-            url : 'http://localhost:8000/tptwitter/users/',
-            dataType : 'json',
-            type : 'GET',
-            success : function(result) {
-                var names = Object.keys(result);
-                $('#userSearch').autocomplete({
-                    source : names,
-                    select: function(event, ui){
-                        var name = ui.item.value;
-                        $.ajax({
-                           url : 'http://localhost:8000/tptwitter/followings',
-                           dataType : 'json',
-                           type : 'POST',
-                           data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
-                           success : function (response){
-                                if(response.result){
-                                    alert('You follow ' +  name);
-                                }else{
-                                    alert('Failed to follow ' + name);
+        if(cookieuuid != '' && typeof cookieuuid != 'undefined'){
+            $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
+            $.ajax({
+                url : 'http://localhost:8000/tptwitter/users/',
+                dataType : 'json',
+                type : 'GET',
+                success : function(result) {
+                    var names = Object.keys(result);
+                    $('#userSearch').autocomplete({
+                        source : names,
+                        select: function(event, ui){
+                            var name = ui.item.value;
+                            $.ajax({
+                               url : 'http://localhost:8000/tptwitter/followings',
+                               dataType : 'json',
+                               type : 'POST',
+                               data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
+                               success : function (response){
+                                    if(response.result){
+                                        alert('You follow ' +  name);
+                                    }else{
+                                        alert('Failed to follow ' + name);
+                                    }
                                 }
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                            });
+                        }
+                    });
+                }
+            });
+        }
     });
 </script>
 <script>
