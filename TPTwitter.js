@@ -37,7 +37,7 @@ app.post('/tptwitter/login', urlencodedParser, function(req, res){
 						cookieid = uuid.v4();
 						//stocke le cookie
 						client.hset('user:'+ id, 'auth', cookieid);
-						client.hset('cookie', cookieid, 'user:' +id);
+						//client.hset('cookie', cookieid, 'user:' +id);
 						//on renvoie que loggin à reussi
 						res.json({result: true, cookieuuid : cookieid, userid: id, username: req.body.login, msg: 'success login'});
 					}else{

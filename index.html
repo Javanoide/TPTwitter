@@ -47,45 +47,38 @@
     username = '';
     userid = '';
     cookieuuid = '';
-    /*$(function(){
-        $('#body').load('login.html');
-    });*/
     
     //fonction initialisant l'autocomplétion
-    $(function(){
-        if(cookieuuid != '' && typeof cookieuuid != 'undefined'){
-            $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
-            $.ajax({
-                url : 'http://localhost:8000/tptwitter/users/',
-                dataType : 'json',
-                type : 'GET',
-                success : function(result) {
-                    var names = Object.keys(result);
-                    $('#userSearch').autocomplete({
-                        source : names,
-                        select: function(event, ui){
-                            var name = ui.item.value;
-                            $.ajax({
-                               url : 'http://localhost:8000/tptwitter/followings',
-                               dataType : 'json',
-                               type : 'POST',
-                               data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
-                               success : function (response){
-                                    if(response.result){
-                                        alert('You follow ' +  name);
-                                    }else{
-                                        alert('Failed to follow ' + name);
-                                    }
+    function initAutocompleteBar(){
+        $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
+        $.ajax({
+            url : 'http://localhost:8000/tptwitter/users/',
+            dataType : 'json',
+            type : 'GET',
+            success : function(result) {
+                var names = Object.keys(result);
+                $('#userSearch').autocomplete({
+                    source : names,
+                    select: function(event, ui){
+                        var name = ui.item.value;
+                        $.ajax({
+                           url : 'http://localhost:8000/tptwitter/followings',
+                           dataType : 'json',
+                           type : 'POST',
+                           data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
+                           success : function (response){
+                                if(response.result){
+                                    alert('You follow ' +  name);
+                                }else{
+                                    alert('Failed to follow ' + name);
                                 }
-                            });
-                        }
-                    });
-                }
-            });
-        }
-    });
-</script>
-<script>
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
 //verifie les cookies au démarrage
     $(function(){
         cookieuuid = $.cookie('cookieuuid');
@@ -98,12 +91,13 @@
            data : "userid=" + userid + "&cookieuuid=" + cookieuuid,
            success : function (response){
                 if(response.result){
-                    $('#body').load('home.html');
+                    initAutocompleteBar();
+                    $('#body').load('/views/home.html');
                 }else{
                     username = '';
                     userid = '';
                     cookieuuid = '';
-                    $('#body').load('login.html');
+                    $('#body').load('/views/login.html');
                 }
            }
        });

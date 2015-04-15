@@ -42,7 +42,8 @@
                     $.cookie('cookieuuid', cookieuuid);
                     $.cookie('username', username);
                     $.cookie('userid', userid);
-                    $('#body').load('home.html');
+                    initAutocompleteBar();
+                    $('#body').load('/views/home.html');
                 }else{
                     $('#ResultLogin').attr('class', "text-danger");
                 }
