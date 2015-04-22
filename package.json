@@ -1,5 +1,5 @@
  {
- 	"name": "TPTwitter",
+ 	"name": "Casoer",
  	"version": "0.1.0",
  	"dependencies": {
  		"express": "~4.11.0",
