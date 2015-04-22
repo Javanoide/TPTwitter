@@ -121,17 +121,16 @@
 <body>
 
 	<div class='row'>
-		<legend class="col-lg-offset-1 col-lg-2 well bs-component" id='welcome'> 
-			
+		<legend class="col-lg-offset-1 col-lg-2 well bs-component"> 
+			<p id="welcome">
+			</p>
+			<button class="btn btn-default" onclick="deconnection()" >Deconnection</button>
 		</legend>
-
-		<button class="btn btn-default" onclick="deconnection()" >Deconnection</button>
 		<script>
 			function deconnection(){
 				$.removeCookie('cookieuuid');
                 $.removeCookie('username');
                 $.removeCookie('userid');
-                alert()
                 window.location.reload();
 			}
 		</script>
