@@ -17,10 +17,14 @@
 
                     <div class="col-lg-10">
                         <input type="password" class="form-control" id="passwd" name="passwd" autofocus />
-                        <p class="text-success" id="ResultLogin"> </p>
+                        <p class="text-success" id="ResultLogin"></p>
                     </div>
                 </div>
                 <button class="btn btn-primary btn-lg-2" type="button" onclick="loginCheck()"> Submit </button>
+                <div id="angry_casoar">
+                    <br/>
+                    <img src="images/casoar3.jpg" alt="angry_casoar" class="img-responsive"/>
+                </div>
 
             </form>
         </div>
@@ -28,6 +32,10 @@
 </div>
 
 <script>
+    $(function(){
+        $('#angry_casoar').hide();
+        $('#happy_casoar').hide();
+    });
     function loginCheck(){
        $.ajax({
            url : 'http://localhost:8000/tptwitter/login',
@@ -46,6 +54,7 @@
                     $('#body').load('/views/home.html');
                 }else{
                     $('#ResultLogin').attr('class', "text-danger");
+                    $('#angry_casoar').fadeIn(1000);
                 }
 
                 $('#ResultLogin').text(result.msg);
@@ -84,9 +93,12 @@
                     </div>
                 </div>
                 <button class="btn btn-primary btn-lg-2" type="button" onclick="newUserCheck()"> Submit </button>
-
             </form>
         </div>
+    </div>
+    <div id="happy_casoar" class="col-lg-4">
+        <br/>
+        <img src="images/casoarwelcome.jpg" alt="happy_casoar" class="img-responsive img-rounded" heigth="300" width="300"/>
     </div>
 </div>
 <script>
@@ -102,6 +114,7 @@
                     $('#ResultNewUser').attr('class', "text-danger");
                 }
                 $('#ResultNewUser').text(result.msg);
+                $('#happy_casoar').fadeIn(400);
            }
         });
     }

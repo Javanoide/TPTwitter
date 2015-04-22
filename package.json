@@ -1,5 +1,5 @@
  {
- 	"name": "TPTwitter",
+ 	"name": "Casoer",
  	"version": "0.1.0",
  	"dependencies": {
  		"express": "~4.11.0",
@@ -14,7 +14,7 @@
  	 "scripts": {
     "postinstall": "bower install",
     "prestart": "npm install",
-    "start": "http-server -a 0.0.0.0 -p 8080 & redis-server & node TPTwitter"
+    "start": "http-server -a 0.0.0.0 -p 8080 -c-1 --cors & redis-server & node TPTwitter"
 	},
  	"author": "Florent Baudon",
  	"description": "TP Twitter cours NoSQL"

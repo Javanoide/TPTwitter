@@ -15,7 +15,7 @@
 	} 
 	//fonction pour charger le header  
     $(function(){
-		$('#welcome').text('Bienvenue ' + username);
+		$('#welcome').text('Welcome comrad ' + username);
 		loadData();
     });
 
@@ -121,11 +121,11 @@
 <body>
 
 	<div class='row'>
-		<legend class="col-lg-offset-1 col-lg-2 well bs-component" id='welcome'> 
-			
+		<legend class="col-lg-offset-1 col-lg-2 well bs-component"> 
+			<p id="welcome">
+			</p>
+			<button class="btn btn-default" onclick="deconnection()" >Deconnection</button>
 		</legend>
-
-		<button class="btn btn-default" onclick="deconnection()" >Deconnection</button>
 		<script>
 			function deconnection(){
 				$.removeCookie('cookieuuid');
@@ -155,7 +155,7 @@
 		<div class='col-lg-5'>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class ="panel-title">Livefeed</h3>
+					<h3 class ="panel-title">My comrad Casoars</h3>
 				</div>
 				<div class-"panel-body">
 					<ul class="list-group" id="livefeedList" >
@@ -169,7 +169,7 @@
 		<div class='col-lg-3'>
 			<div class="panel panel-primary">
 				<div class="panel-heading">
-					<h3 class ="panel-title">Mon Humeur</h3>
+					<h3 class ="panel-title">My mud of Casoar</h3>
 				</div>
 				<div class-"panel-body">
 					<div class='col-lg-12'>
@@ -178,7 +178,7 @@
 				    <div class ='row'>
 				        <div class="col-lg-12">
 				            <div class="well bs-component">
-				                <legend>Quel est votre humeur aujourd'hui ?</legend>
+				                <legend>Something to say ?</legend>
 				            	<form class="form-horizontal" id="postForm">
 
 				                    <div class="form-group">
@@ -188,7 +188,7 @@
 				                            <input type="text" class="form-control" id="message" name="message" autofocus />
 				                        </div>
 				                    </div>
-				                    <button class="btn btn-primary btn-lg-2" type="button" onclick="postMessage()"> Submit </button>
+				                    <button class="btn btn-primary btn-lg-2" type="button" onclick="postMessage()"> Tweet like a true Casoar ! <img src="images/casoartweet.jpg" alt="casoar-tweet" class="img-circle"  width="80" height="80"></button>
 
 				                </form>
 				            </div>

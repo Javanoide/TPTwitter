@@ -1,6 +1,10 @@
 <head>
     <meta charset="utf-8">
     <title>TP Twitter</title>
+    
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
 
@@ -11,7 +15,7 @@
     <script src="/bower_components/jquery-ui/jquery-ui.js"></script>
     <script src="/bower_components/jquery.cookie/jquery.cookie.js"></script>
     
-    <title>TP Twitter</title>
+    <title>Casoer</title>
     <style>
         a {text-decoration: none; color: black;}
     </style>
@@ -19,27 +23,21 @@
 
 <nav class="navbar navbar-default" role="navigation">
     <div class="container-fluid">
-
+        <img src="images/casoar2.jpg" alt="casoar-icon" class="img-circle"  width="80" height="80">
         <div class="navbar-header">
-
-            <a class="navbar-brand" href="#">
-                <!--<span class="glyphicon glyphicon glyphicon-tree-deciduous"></span>-->
-                TP Twitter
+            <a class="navbar-brand" onclick="$('#body').load('views/about.html');">
+                <h4>Casoer -
+                Tweet louder than birds ! Like a casoar</h4>
             </a>
         </div>
-
-        <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="/about">About</a></li>
-        </ul>
         <form class="navbar-form navbar-left" role="search">
-
             <div class="form-group" id="searchBar">
             </div>
-           
         </form>
 
-
+        <ul class="nav navbar-nav navbar-right">
+            <li><button class="btn btn-primary btn-md" onclick="$('#body').load('views/about.html');"><img src="images/casoar8.jpg" alt="casoar-soon" class="img-rounded"  width="110" height="60">  Join the revolution !</button></li>
+        </ul>
     </div>
 </nav>
 
