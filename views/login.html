@@ -34,6 +34,7 @@
 <script>
     $(function(){
         $('#angry_casoar').hide();
+        $('#happy_casoar').hide();
     });
     function loginCheck(){
        $.ajax({
@@ -53,11 +54,7 @@
                     $('#body').load('/views/home.html');
                 }else{
                     $('#ResultLogin').attr('class', "text-danger");
-
-
-
-
-                                    $('#angry_casoar').fadeIn(1000);
+                    $('#angry_casoar').fadeIn(1000);
                 }
 
                 $('#ResultLogin').text(result.msg);
@@ -96,6 +93,10 @@
                     </div>
                 </div>
                 <button class="btn btn-primary btn-lg-2" type="button" onclick="newUserCheck()"> Submit </button>
+                <div id="happy_casoar">
+                    <br/>
+                    <img src="images/casoarwelcome.jpg" alt="happy_casoar" class="img-responsive"/>
+                </div>
 
             </form>
         </div>
@@ -114,6 +115,7 @@
                     $('#ResultNewUser').attr('class', "text-danger");
                 }
                 $('#ResultNewUser').text(result.msg);
+                $('#happy_casoar').fadeIn(400);
            }
         });
     }
