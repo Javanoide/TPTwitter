@@ -38,7 +38,7 @@
     });
     function loginCheck(){
        $.ajax({
-           url : 'http://localhost:8000/tptwitter/login',
+           url : apiUrl + '/tptwitter/login',
            type : 'POST',
            data : "login=" + $('#login').val() + "&passwd=" + $('#passwd').val(),
            success : function(result){
@@ -104,7 +104,7 @@
 <script>
     function newUserCheck(){
        $.ajax({
-           url : 'http://localhost:8000/tptwitter/newuser',
+           url : apiUrl + '/tptwitter/newuser',
            type : 'POST',
            data : "newlogin=" + $('#newLogin').val() + "&newpasswd=" + $('#newPasswd').val() + "&newpasswd2=" + $('#newPasswd2').val(),
            success : function(result){

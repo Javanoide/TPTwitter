@@ -47,7 +47,7 @@
 	function getLastPost(){
 		$('#myStatus').fadeOut(400, function() {
 			$.ajax({
-				url : 'http://localhost:8000/tptwitter/posts/' + userid,
+				url : apiUrl + '/tptwitter/posts/' + userid,
 				dataType : 'json',
 				type : 'GET',
 				success : function(result) {
@@ -60,20 +60,20 @@
 	//charge les messages de ceux que l'on suit
 	function setLivefeed(){
 		$.ajax({
-			url : 'http://localhost:8000/tptwitter/followings/' + userid,
+			url : apiUrl + '/tptwitter/followings/' + userid,
 			dataType : 'json',
 			type : 'GET',
 			success : function(resultFoll) {
 				for(var i=0; i<resultFoll.followings.length; i++){
 					//récupére login correspondant à l'user id
 					$.ajax({
-						url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followings[i],
+						url : apiUrl + '/tptwitter/login/' + resultFoll.followings[i],
 						dataType : 'json',
 						type : 'GET',
 						success : function(resultId) {
 							//récupére les posts
 							$.ajax({
-								url : 'http://localhost:8000/tptwitter/posts/' + resultId.userid,
+								url : apiUrl + '/tptwitter/posts/' + resultId.userid,
 								dataType : 'json',
 								type : 'GET',
 								success : function(resultPost) {
@@ -95,13 +95,13 @@
 	//get followers
 	function getFollowers(){
 		$.ajax({
-			url : 'http://localhost:8000/tptwitter/followers/' + userid,
+			url : apiUrl + '/tptwitter/followers/' + userid,
 			dataType : 'json',
 			type : 'GET',
 			success : function(resultFoll) {
 				for(var i=0; i<resultFoll.followers.length; i++){
 					$.ajax({
-						url : 'http://localhost:8000/tptwitter/login/' + resultFoll.followers[i],
+						url : apiUrl + '/tptwitter/login/' + resultFoll.followers[i],
 						dataType : 'json',
 						type : 'GET',
 						success : function(resultId) {
@@ -200,7 +200,7 @@
 	    <script>
 	        function postMessage(){
 	           $.ajax({
-	               url : 'http://localhost:8000/tptwitter/posts',
+	               url : apiUrl + '/tptwitter/posts',
 	               dataType : 'json',
 	               type : 'POST',
 	               data : "userid=" + userid + "&msg=" + $('#message').val() + "&cookieuuid=" + cookieuuid,

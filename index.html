@@ -1,6 +1,6 @@
 <head>
     <meta charset="utf-8">
-    <title>TP Twitter</title>
+    <title>Casoer</title>
     
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
@@ -42,6 +42,7 @@
 </nav>
 
 <script>
+    apiUrl = 'http://192.168.202.129:8000';
     username = '';
     userid = '';
     cookieuuid = '';
@@ -50,7 +51,7 @@
     function initAutocompleteBar(){
         $('#searchBar').append('<input id="userSearch" class="form-control" type="text" placeholder="Search User"> <button class="btn btn-default" type="submit">Follow</button>');
         $.ajax({
-            url : 'http://localhost:8000/tptwitter/users/',
+            url : apiUrl + '/tptwitter/users/',
             dataType : 'json',
             type : 'GET',
             success : function(result) {
@@ -60,7 +61,7 @@
                     select: function(event, ui){
                         var name = ui.item.value;
                         $.ajax({
-                           url : 'http://localhost:8000/tptwitter/followings',
+                           url : apiUrl + '/tptwitter/followings',
                            dataType : 'json',
                            type : 'POST',
                            data : "userid=" + userid + "&followid=" + result[ui.item.value]+ "&cookieuuid=" + cookieuuid,
@@ -83,7 +84,7 @@
         username = $.cookie('username');
         userid = $.cookie('userid');
          $.ajax({
-           url : 'http://localhost:8000/tptwitter/checkcookie',
+           url : apiUrl + '/tptwitter/checkcookie',
            dataType : 'json',
            type : 'POST',
            data : "userid=" + userid + "&cookieuuid=" + cookieuuid,
